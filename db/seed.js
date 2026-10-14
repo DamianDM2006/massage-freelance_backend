@@ -11,11 +11,13 @@ const seedAddresses = async () => {
 
     const address = {
       streetLine1: streetLine1,
+      streetLine2: "",
       unit: unit,
       city: city,
       subDist: "Huai Racha",
       district: "Huai Rat",
-      state: "Buriram"
+      state: "Buriram",
+      postalCode: 31000
     };
     await createAddress(address);
     console.log(`ADDRESS FROM seedAddresses:`, address);

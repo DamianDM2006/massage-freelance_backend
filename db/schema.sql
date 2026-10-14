@@ -12,7 +12,8 @@ CREATE TABLE addresses (
   city VARCHAR(30),
   sub_district VARCHAR(40),
   district VARCHAR(40),
-  provence_state VARCHAR(40)
+  provence_state VARCHAR(40),
+  postal_code INT
 );
 
 CREATE TABLE patient_info (
