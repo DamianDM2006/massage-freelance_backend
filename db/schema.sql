@@ -25,7 +25,7 @@ CREATE TABLE patient_info (
   address_id INT REFERENCES addresses(id),
   email VARCHAR(100),
   line_user_id VARCHAR(50),
-  phone BIGINT,
+  phone VARCHAR(20),
   birthdate DATE
 );
 

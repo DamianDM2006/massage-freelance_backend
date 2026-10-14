@@ -2,6 +2,7 @@ import db from "./client.js";
 import { faker } from "@faker-js/faker";
 
 import { createAddress } from "./queries/addresses.js";
+import { createPatient } from "./queries/patient_info.js";
 
 const seedAddresses = async () => {
   for (let i = 1; i <= 3; i++) {
@@ -24,8 +25,36 @@ const seedAddresses = async () => {
   }
 };
 
+const seedPatients = async () => {
+  for (let i = 1; i <= 10; i++) {
+    const rawBirthdate = faker.date.birthdate({ mode: 'age', min: 13, max: 90 });
+    const birthdate = rawBirthdate.toISOString().split('T')[0];
+    const gender = faker.person.sex();
+    const firstName = faker.person.firstName(gender);
+    const lastName = faker.person.lastName();
+    const addressID = Math.floor(Math.random() * 3) + 1;
+    const email = faker.internet.email({ firstName: firstName });
+    const phone = faker.phone.number({ style: 'international' });
+
+    const patient = {
+      firstName: firstName,
+      lastName: lastName,
+      nickname: firstName,
+      gender: gender,
+      addressID: addressID,
+      email: email,
+      lineID: "none",
+      phone: phone,
+      birthdate: birthdate
+    };
+    await createPatient(patient);
+    console.log(`PATIENT FROM seedPatients:`, patient);
+  }
+};
+
 await db.connect();
 await seedAddresses();
+await seedPatients();
 await db.end();
 
 console.log(`Addresses are seeded`);
