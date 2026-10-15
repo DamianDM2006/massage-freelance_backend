@@ -1,8 +1,14 @@
 DROP TABLE IF EXISTS appointments;
-DROP TABLE IF EXISTS services;
-DROP TABLE IF EXISTS client_credentials;
 DROP TABLE IF EXISTS patient_info;
+DROP TABLE IF EXISTS client_credentials;
 DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS services;
+
+CREATE TABLE services (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(50) NOT NULL,
+  description TEXT NOT NULL
+);
 
 CREATE TABLE addresses (
   id SERIAL PRIMARY KEY,
@@ -16,8 +22,15 @@ CREATE TABLE addresses (
   postal_code INT
 );
 
+CREATE TABLE client_credentials (
+  id SERIAL PRIMARY KEY,
+  user_name VARCHAR(30) UNIQUE NOT NULL,
+  password TEXT NOT NULL
+);
+
 CREATE TABLE patient_info (
   id SERIAL PRIMARY KEY,
+  client_id INT REFERENCES client_credentials(id) NOT NULL,
   first_name VARCHAR(30),
   last_name VARCHAR(35) NOT NULL,
   nickname VARCHAR(30) NOT NULL,
@@ -27,19 +40,6 @@ CREATE TABLE patient_info (
   line_user_id VARCHAR(50),
   phone VARCHAR(20),
   birthdate DATE
-);
-
-CREATE TABLE client_credentials (
-  id SERIAL PRIMARY KEY,
-  user_name VARCHAR(30) UNIQUE NOT NULL,
-  password VARCHAR(100) NOT NULL,
-  patient_id INT REFERENCES patient_info(id) NOT NULL
-);
-
-CREATE TABLE services (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(50) NOT NULL,
-  description TEXT NOT NULL
 );
 
 CREATE TABLE appointments (

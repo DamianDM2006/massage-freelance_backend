@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 import { createAddress } from "./queries/addresses.js";
 import { createPatient } from "./queries/patient_info.js";
 import { createService } from "./queries/services.js";
+import { createClientCreds } from "./queries/client_credentials.js";
 
 const seedAddresses = async () => {
   for (let i = 1; i <= 3; i++) {
@@ -37,10 +38,12 @@ const seedPatients = async () => {
     const firstName = faker.person.firstName(gender);
     const lastName = faker.person.lastName();
     const addressID = Math.floor(Math.random() * 3) + 1;
+    const clientID = addressID;
     const email = faker.internet.email({ firstName: firstName });
     const phone = faker.phone.number({ style: "international" });
 
     const patient = {
+      clientID: clientID,
       firstName: firstName,
       lastName: lastName,
       nickname: firstName,
@@ -65,9 +68,19 @@ const seedServices = async () => {
     };
     await createService(service)
   }
-}
+};
+
+const seedClients = async () => {
+  for (let i = 1; i <= 3; i++) {
+    const userName = `TESTING_client${i}`;
+    const password = `PASSWORD${i}Test`;
+    await createClientCreds(userName, password)
+  }
+};
+
 await db.connect();
+await seedServices();
+await seedClients();
 await seedAddresses();
 await seedPatients();
-await seedServices();
 await db.end();

@@ -1,6 +1,7 @@
 import db from "../client.js";
 
 export const createPatient = async ({
+  clientID,
   firstName,
   lastName,
   nickname,
@@ -16,6 +17,7 @@ export const createPatient = async ({
       rows: [patient],
     } = await db.query(`
         INSERT INTO patient_info (
+          client_id,
           first_name,
           last_name,
           nickname,
@@ -26,6 +28,7 @@ export const createPatient = async ({
           phone,
           birthdate)
         VALUES (
+          '${clientID}',
           '${firstName}',
           '${lastName}',
           '${nickname}',
