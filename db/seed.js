@@ -78,9 +78,20 @@ const seedClients = async () => {
   }
 };
 
+const seedAppointments = async () => {
+  for (let i = 1; i <= 15; i++) {
+    const rawDate = faker.date.future();
+    const date = rawDate.toISOString().split("T")[0];
+    const time = rawDate.toISOString().split("T")[1];
+    console.log(`DATE:`, date);
+    console.log(`TIME:`, time);
+  }
+}
+
 await db.connect();
-await seedServices();
-await seedClients();
-await seedAddresses();
-await seedPatients();
+// await seedServices();
+// await seedClients();
+// await seedAddresses();
+// await seedPatients();
+await seedAppointments();
 await db.end();
