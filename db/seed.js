@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 
 import { createAddress } from "./queries/addresses.js";
 import { createPatient } from "./queries/patient_info.js";
+import { createService } from "./queries/services.js";
 
 const seedAddresses = async () => {
   for (let i = 1; i <= 3; i++) {
@@ -18,23 +19,26 @@ const seedAddresses = async () => {
       subDist: "Huai Racha",
       district: "Huai Rat",
       state: "Buriram",
-      postalCode: 31000
+      postalCode: 31000,
     };
     await createAddress(address);
-    console.log(`ADDRESS FROM seedAddresses:`, address);
   }
 };
 
 const seedPatients = async () => {
   for (let i = 1; i <= 10; i++) {
-    const rawBirthdate = faker.date.birthdate({ mode: 'age', min: 13, max: 90 });
-    const birthdate = rawBirthdate.toISOString().split('T')[0];
+    const rawBirthdate = faker.date.birthdate({
+      mode: "age",
+      min: 13,
+      max: 90,
+    });
+    const birthdate = rawBirthdate.toISOString().split("T")[0];
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender);
     const lastName = faker.person.lastName();
     const addressID = Math.floor(Math.random() * 3) + 1;
     const email = faker.internet.email({ firstName: firstName });
-    const phone = faker.phone.number({ style: 'international' });
+    const phone = faker.phone.number({ style: "international" });
 
     const patient = {
       firstName: firstName,
@@ -45,16 +49,25 @@ const seedPatients = async () => {
       email: email,
       lineID: "none",
       phone: phone,
-      birthdate: birthdate
+      birthdate: birthdate,
     };
     await createPatient(patient);
-    console.log(`PATIENT FROM seedPatients:`, patient);
   }
 };
 
+const seedServices = async () => {
+  for (let i = 1; i <= 3; i++) {
+    const title = `Massage Title ${i}`;
+    const description = `Description Number ${i}`;
+    const service = {
+      title: title,
+      description: description
+    };
+    await createService(service)
+  }
+}
 await db.connect();
 await seedAddresses();
 await seedPatients();
+await seedServices();
 await db.end();
-
-console.log(`Addresses are seeded`);

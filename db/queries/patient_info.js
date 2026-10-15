@@ -1,8 +1,20 @@
 import db from "../client.js";
 
-export const createPatient = async ({firstName, lastName, nickname, gender, addressID, email, lineID, phone, birthdate }) => {
+export const createPatient = async ({
+  firstName,
+  lastName,
+  nickname,
+  gender,
+  addressID,
+  email,
+  lineID,
+  phone,
+  birthdate,
+}) => {
   try {
-    const { rows: [patient] } = await db.query(`
+    const {
+      rows: [patient],
+    } = await db.query(`
         INSERT INTO patient_info (
           first_name,
           last_name,
@@ -25,8 +37,8 @@ export const createPatient = async ({firstName, lastName, nickname, gender, addr
           '${birthdate}')
         RETURNING *;
       `);
-      return patient
-  } catch(err) {
-    console.log(`ERROR CREATING PATIENT`, err)
+    return patient;
+  } catch (err) {
+    console.log(`ERROR CREATING PATIENT`, err);
   }
-}
+};
