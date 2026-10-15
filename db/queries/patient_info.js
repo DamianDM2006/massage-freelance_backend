@@ -45,3 +45,21 @@ export const createPatient = async ({
     console.log(`ERROR CREATING PATIENT:`, err);
   }
 };
+
+export const getPatientInfoById = async (id) => {};
+
+export const getAllPatientsByClientId = async (clientID) => {};
+
+export const updatePatientInfo = async (patientID) => {};
+  /*
+    ABLE TO UPDATE THE FOLLOWING 
+      client_id (patient becomes payer/opens new account)
+      last_name (case of marriage, etc.)
+      nickname
+      address_id
+      email
+      line_user_id
+      phone
+  */
+
+export const getAllPatients = async () => {};

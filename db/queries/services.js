@@ -16,3 +16,7 @@ export const createService = async ({ title, description }) => {
     console.log(`ERROR CREATING SERVICE:`, err)
   }
 };
+
+export const getAllServices = async () => {};
+
+export const getServiceById = async (serviceID) => {};

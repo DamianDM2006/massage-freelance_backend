@@ -39,3 +39,9 @@ export const createAddress = async ({
     console.log(`ERROR CREATING EMPLOYEE:`, err);
   }
 };
+
+export const getAddressByClientId = async (clientID) => {};
+
+export const getAddressByPatientId = async (patientID) => {};
+
+export const updatePatientAddress = async (addressID, patientID) => {};

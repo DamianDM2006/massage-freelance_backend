@@ -15,3 +15,9 @@ export const createClientCreds = async (userName, password) => {
     console.log(`ERROR CREATING CLIENT CREDENTIALS:`, err)
   }
 };
+
+export const getClientByLogin = async (userName, password) => {};
+
+export const getClientById = async (id) => {};
+
+export const getClientByPatientId = async (patientID) => {};
