@@ -5,6 +5,7 @@ import { createAddress } from "./queries/addresses.js";
 import { createPatient } from "./queries/patient_info.js";
 import { createService } from "./queries/services.js";
 import { createClientCreds } from "./queries/client_credentials.js";
+import { createAppointment } from "./queries/appointments.js";
 
 const seedAddresses = async () => {
   for (let i = 1; i <= 3; i++) {
@@ -82,16 +83,28 @@ const seedAppointments = async () => {
   for (let i = 1; i <= 15; i++) {
     const rawDate = faker.date.future();
     const date = rawDate.toISOString().split("T")[0];
-    const time = rawDate.toISOString().split("T")[1];
-    console.log(`DATE:`, date);
-    console.log(`TIME:`, time);
+
+    const rawTime = rawDate.toISOString().split("T")[1];
+    const time = rawTime.slice(0, 5);
+
+    const patientID = Math.floor(Math.random() * 3) + 1;
+    const serviceID = Math.floor(Math.random() * 3) + 1;
+
+    const appointment = {
+      date: date,
+      time: time,
+      patientID: patientID,
+      serviceID: serviceID
+    };
+
+    await createAppointment(appointment);
   }
 }
 
 await db.connect();
-// await seedServices();
-// await seedClients();
-// await seedAddresses();
-// await seedPatients();
+await seedServices();
+await seedClients();
+await seedAddresses();
+await seedPatients();
 await seedAppointments();
 await db.end();

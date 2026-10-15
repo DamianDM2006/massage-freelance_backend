@@ -1,5 +1,4 @@
 import db from "../client.js";
-console.log(`INITIATING APPOINTMENTS.JS`);
 
 export const createAppointment = async ({
   date,
@@ -24,6 +23,6 @@ export const createAppointment = async ({
     const { rows: [appointment] } = await db.query(sql);
     return appointment;
   } catch(err) {
-    console.log(err)
+    console.log(`ERROR CREATING APPOINTMENT:`,err)
   }
 };

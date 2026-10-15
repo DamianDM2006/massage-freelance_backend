@@ -42,6 +42,6 @@ export const createPatient = async ({
       `);
     return patient;
   } catch (err) {
-    console.log(`ERROR CREATING PATIENT`, err);
+    console.log(`ERROR CREATING PATIENT:`, err);
   }
 };

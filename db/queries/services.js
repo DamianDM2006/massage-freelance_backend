@@ -1,5 +1,4 @@
 import db from "../client.js";
-console.log(`INITIATING SERVICES.JS`);
 
 export const createService = async ({ title, description }) => {
   try {
@@ -14,6 +13,6 @@ export const createService = async ({ title, description }) => {
       `);
     return service;
   } catch(err) {
-    console.log(`ERROR CREATING SERVICE`, err)
+    console.log(`ERROR CREATING SERVICE:`, err)
   }
 };

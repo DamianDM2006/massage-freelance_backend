@@ -1,5 +1,4 @@
 import db from "../client.js";
-console.log(`INITIATING ADDRESS QUERY`);
 
 export const createAddress = async ({
   streetLine1,
@@ -37,6 +36,6 @@ export const createAddress = async ({
       `);
     return address;
   } catch (err) {
-    console.log(`ERROR CREATING EMPLOYEE`, err);
+    console.log(`ERROR CREATING EMPLOYEE:`, err);
   }
 };

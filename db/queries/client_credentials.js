@@ -1,9 +1,7 @@
 import db from "../client.js";
 import bcrypt from "bcrypt";
-console.log(`INITIATING CLIENT_CREDENTIALS.JS`);
 
 export const createClientCreds = async (userName, password) => {
-  console.log(`IN createClientCreds: `, userName, password);
   const hashPass = await bcrypt.hash(password, 10);
   const sql = `
     INSERT INTO client_credentials (user_name, password)
@@ -11,10 +9,9 @@ export const createClientCreds = async (userName, password) => {
     RETURNING *
   `;
   try {
-    const { rows: [client] } = await db.query(sql, [userName,hashPass]);
-    console.log(`client_credentials.USER:`, client);
+    const { rows: [client] } = await db.query(sql, [userName, hashPass]);
     return client;
   } catch(err) {
-    console.log(err)
+    console.log(`ERROR CREATING CLIENT CREDENTIALS:`, err)
   }
 };
