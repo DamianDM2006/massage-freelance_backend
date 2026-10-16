@@ -40,16 +40,12 @@ export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
 };
 
 export const getClientByLogin = async ({ userName, password }) => {
+  const sql = `
+    SELECT * FROM client_credentials
+    WHERE user_name = $1;
+  `
   try {
-    const {
-      rows: [client],
-    } = await db.query(
-      `
-      SELECT * FROM client_credentials
-      WHERE user_name = $1;
-      `,
-      [userName],
-    );
+    const { rows: [client] } = await db.query(sql, [userName]);
 
     if (!client) throw new Error("CLIENT NOT FOUND");
 
@@ -69,8 +65,21 @@ export const getClientByLogin = async ({ userName, password }) => {
   }
 };
 
-export const getClientByToken = async () => {};
+export const getClientById = async (id) => {
+  const sql = `
+    SELECT *
+    FROM client_credentials
+    WHERE id = ${id}
+  `;
 
-export const getClientById = async (id) => {};
+  try {
+    const { rows: [client] } = await db.query(sql);
+    return client
+  } catch (err) {
+    console.log(`ERROR GETTING CLIENT BY ID:`, err)
+  }
+};
 
-export const getClientByPatientId = async (patientID) => {};
+export const getClientByPatientId = async (patientID) => {
+
+};
