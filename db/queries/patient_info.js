@@ -1,4 +1,4 @@
-import db from "../client.js";
+import db from "../db.js";
 
 export const createPatient = async ({
   clientID,
@@ -51,7 +51,7 @@ export const getPatientInfoById = async (id) => {};
 export const getAllPatientsByClientId = async (clientID) => {};
 
 export const updatePatientInfo = async (patientID) => {};
-  /*
+/*
     ABLE TO UPDATE THE FOLLOWING 
       client_id (patient becomes payer/opens new account)
       last_name (case of marriage, etc.)

@@ -1,4 +1,4 @@
-import db from "../client.js";
+import db from "../db.js";
 
 export const createAppointment = async ({
   date,
@@ -20,15 +20,17 @@ export const createAppointment = async ({
     RETURNING *;
   `;
   try {
-    const { rows: [appointment] } = await db.query(sql);
+    const {
+      rows: [appointment],
+    } = await db.query(sql);
     return appointment;
-  } catch(err) {
-    console.log(`ERROR CREATING APPOINTMENT:`,err)
+  } catch (err) {
+    console.log(`ERROR CREATING APPOINTMENT:`, err);
   }
 };
 
 export const getAllAppointments = async () => {};
-  /*
+/*
     This will be used to obtain unavailable appointment time.
     the algorythm will be handled mostly on the front end.
 
@@ -40,7 +42,7 @@ export const getAppointmentsByClientID = async (clientID) => {};
 export const getAppointmentsByPatientID = async (patientID) => {};
 
 export const cancelAppointment = async (appointmentID) => {};
-  /*
+/*
     The process of changing appointments requires the patient/client to
     cancel/delete the appointment and then to reschedule/create a new
     appointment.
@@ -50,4 +52,3 @@ export const cancelAppointment = async (appointmentID) => {};
     completed appointments will be used to track previous rendered services
     or no-shows.
   */
-

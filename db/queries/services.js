@@ -1,8 +1,10 @@
-import db from "../client.js";
+import db from "../db.js";
 
 export const createService = async ({ title, description }) => {
   try {
-    const { rows: [service]} = await db.query(`
+    const {
+      rows: [service],
+    } = await db.query(`
         INSERT INTO services (
           title,
           description)
@@ -12,8 +14,8 @@ export const createService = async ({ title, description }) => {
         RETURNING *;
       `);
     return service;
-  } catch(err) {
-    console.log(`ERROR CREATING SERVICE:`, err)
+  } catch (err) {
+    console.log(`ERROR CREATING SERVICE:`, err);
   }
 };
 

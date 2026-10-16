@@ -1,4 +1,4 @@
-import db from "../client.js";
+import db from "../db.js";
 
 export const createAddress = async ({
   streetLine1,
@@ -12,7 +12,7 @@ export const createAddress = async ({
 }) => {
   try {
     const {
-      rows: [address]
+      rows: [address],
     } = await db.query(`
       INSERT INTO addresses (
         street_number_1,

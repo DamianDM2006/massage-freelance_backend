@@ -1,4 +1,4 @@
-import db from "./client.js";
+import db from "./db.js";
 import { faker } from "@faker-js/faker";
 
 import { createAddress } from "./queries/addresses.js";
@@ -65,9 +65,9 @@ const seedServices = async () => {
     const description = `Description Number ${i}`;
     const service = {
       title: title,
-      description: description
+      description: description,
     };
-    await createService(service)
+    await createService(service);
   }
 };
 
@@ -75,7 +75,11 @@ const seedClients = async () => {
   for (let i = 1; i <= 3; i++) {
     const userName = `TESTING_client${i}`;
     const password = `PASSWORD${i}Test`;
-    await createClientCreds(userName, password)
+    const newClient = {
+      userName: userName,
+      password: password,
+    };
+    await createClientCreds(newClient);
   }
 };
 
@@ -94,12 +98,12 @@ const seedAppointments = async () => {
       date: date,
       time: time,
       patientID: patientID,
-      serviceID: serviceID
+      serviceID: serviceID,
     };
 
     await createAppointment(appointment);
   }
-}
+};
 
 await db.connect();
 await seedServices();
