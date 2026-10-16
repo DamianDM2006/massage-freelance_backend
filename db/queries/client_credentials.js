@@ -39,7 +39,7 @@ export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
   }
 };
 
-export const loginClient = async ({ userName, password }) => {
+export const getClientByLogin = async ({ userName, password }) => {
   try {
     const {
       rows: [client],
@@ -68,8 +68,6 @@ export const loginClient = async ({ userName, password }) => {
     console.log(`ERROR LOGGING IN CLIENT:`, err);
   }
 };
-
-export const getClientByLogin = async (userName, password) => {};
 
 export const getClientByToken = async () => {};
 
