@@ -32,7 +32,7 @@ export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
     `;
     
     const { rows: [client] } = await db.query(sql);
-    console.log(`CLIENT:`, client);
+    // console.log(`CLIENT:`, client);
     return client;
   } catch (err) {
     console.log(`ERROR UPDATING PASSWORD:`, err);

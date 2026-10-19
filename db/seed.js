@@ -56,9 +56,8 @@ const seedPatients = async () => {
       birthdate: birthdate,
     };
 
-    const random = Math.floor(Math.random() * i) + 1;
     await createPatient(patient);
-    await updateWhichPatientIsClient(clientID, random);
+    await updateWhichPatientIsClient(clientID, i);
   };
 };
 

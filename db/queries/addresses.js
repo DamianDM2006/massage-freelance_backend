@@ -42,9 +42,27 @@ export const createAddress = async ({
 
 export const getAddressByClientId = async (clientID) => {
   const sql = `
-    SELECT *
-    FROM 
+  SELECT
+    client_credentials.id AS id_number,
+    patient_info.nickname AS name,
+    patient_info.last_name AS last_name,
+    addresses.* AS address
+  FROM client_credentials
+  LEFT JOIN patient_info
+  ON client_credentials.id = patient_info.client_id
+  LEFT JOIN addresses
+  ON patient_info.address_id = addresses.id
+  WHERE client_credentials.id = ${clientID}
+  AND client_credentials.patient_id = patient_info.id;
   `;
+
+  try {
+    const { rows: [address] } = await db.query(sql);
+    // console.log(`ADDRESS: getAddressByClientId`, address);
+    return address
+  } catch (err) {
+    console.log(`ERROR GETTING CLIENT'S ADDRESS:`, err);
+  }
 };
 
 export const getAddressByPatientId = async (patientID) => {};
