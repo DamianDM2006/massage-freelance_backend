@@ -52,4 +52,14 @@ CREATE TABLE appointments (
 );
 
 ALTER TABLE client_credentials
-ADD COLUMN patient_id INT UNIQUE REFERENCES patient_info(id) 
+ADD COLUMN patient_id INT UNIQUE REFERENCES patient_info(id);
+
+ALTER TABLE addresses
+ADD CONSTRAINT unique_address_idx UNIQUE (
+  street_number_1,
+  street_number_2,
+  apt_unit,
+  city,
+  provence_state,
+  postal_code
+);

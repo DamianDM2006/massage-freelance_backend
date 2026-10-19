@@ -34,6 +34,20 @@ export const createAddress = async ({
         '${postalCode}')
       RETURNING *;
       `);
+
+/*
+MERGE INTO addresses a
+USING (VALUES ('123 Main St', 'Denver', 'CO', '80216')) 
+    AS n(street, city, state, zip_code)
+ON a.street = n.street AND a.city = n.city AND a.state = n.state AND a.zip_code = n.zip_code
+WHEN NOT MATCHED THEN
+    INSERT (street, city, state, zip_code) 
+    VALUES (n.street, n.city, n.state, n.zip_code)
+WHEN MATCHED THEN
+    DO NOTHING
+RETURNING a.id;
+
+*/
     return address;
   } catch (err) {
     console.log(`ERROR CREATING EMPLOYEE:`, err);
@@ -92,4 +106,44 @@ export const getAddressByPatientId = async (patientID) => {
   }
 };
 
-export const updatePatientAddress = async (addressID, patientID) => {};
+export const updatePatientAddress = async (addressID, patientID, newAddressData) => {
+  /*
+    Does the new address match exactly any other rows in the table?
+      if yes then assign address.id to patient_info.address_id
+      if no then create new address and assign new address.id to patient_info.address_id
+
+ALTER TABLE addresses 
+ADD CONSTRAINT unique_address_idx UNIQUE (street, city, state, zip_code);
+
+WITH upsert_address AS (
+    INSERT INTO addresses (street, city, state, zip_code)
+    VALUES ('123 Main St', 'Denver', 'CO', '80216')
+    ON CONFLICT (street, city, state, zip_code) 
+    DO UPDATE SET street = EXCLUDED.street -- Safe "no-op" to force Postgres to return the existing row ID
+    RETURNING id
+)
+INSERT INTO users (name, address_id)
+SELECT 'Jane Doe', id 
+FROM upsert_address;
+
+
+!!!
+WITH upsert_address AS (
+    MERGE INTO addresses a
+    USING (VALUES ('123 Main St', 'Denver', 'CO', '80216')) 
+        AS n(street, city, state, zip_code)
+    ON a.street = n.street AND a.city = n.city AND a.state = n.state AND a.zip_code = n.zip_code
+    WHEN NOT MATCHED THEN
+        INSERT (street, city, state, zip_code) 
+        VALUES (n.street, n.city, n.state, n.zip_code)
+    WHEN MATCHED THEN
+        DO NOTHING -- No dummy update needed anymore in PG 17/18!
+    RETURNING a.id
+)
+INSERT INTO users (name, address_id)
+SELECT 'Jane Doe', id 
+FROM upsert_address;
+
+
+  */
+};
