@@ -40,7 +40,12 @@ export const createAddress = async ({
   }
 };
 
-export const getAddressByClientId = async (clientID) => {};
+export const getAddressByClientId = async (clientID) => {
+  const sql = `
+    SELECT *
+    FROM 
+  `;
+};
 
 export const getAddressByPatientId = async (patientID) => {};
 

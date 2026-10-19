@@ -4,7 +4,7 @@ import { faker } from "@faker-js/faker";
 import { createAddress } from "./queries/addresses.js";
 import { createPatient } from "./queries/patient_info.js";
 import { createService } from "./queries/services.js";
-import { createClientCreds } from "./queries/client_credentials.js";
+import { createClientCreds, updateWhichPatientIsClient } from "./queries/client_credentials.js";
 import { createAppointment } from "./queries/appointments.js";
 
 const seedAddresses = async () => {
@@ -55,8 +55,11 @@ const seedPatients = async () => {
       phone: phone,
       birthdate: birthdate,
     };
+
+    const random = Math.floor(Math.random() * i) + 1;
     await createPatient(patient);
-  }
+    await updateWhichPatientIsClient(clientID, random);
+  };
 };
 
 const seedServices = async () => {
@@ -110,5 +113,5 @@ await seedServices();
 await seedClients();
 await seedAddresses();
 await seedPatients();
-await seedAppointments();
+//await seedAppointments();
 await db.end();

@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS appointments;
-DROP TABLE IF EXISTS patient_info;
-DROP TABLE IF EXISTS client_credentials;
+DROP TABLE IF EXISTS appointments CASCADE;
+DROP TABLE IF EXISTS patient_info CASCADE;
+DROP TABLE IF EXISTS client_credentials CASCADE;
 DROP TABLE IF EXISTS addresses;
 DROP TABLE IF EXISTS services;
 
@@ -50,3 +50,6 @@ CREATE TABLE appointments (
   service_id INT REFERENCES services(id) NOT NULL,
   completed BOOLEAN NOT NULL DEFAULT false
 );
+
+ALTER TABLE client_credentials
+ADD COLUMN patient_id INT UNIQUE REFERENCES patient_info(id) 

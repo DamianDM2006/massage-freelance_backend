@@ -39,6 +39,21 @@ export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
   }
 };
 
+export const updateWhichPatientIsClient = async ( clientID, patientID ) => {
+  const sql = `
+    UPDATE client_credentials
+    SET patient_id = ${patientID}
+    WHERE id = ${clientID}
+    RETURNING *
+  `;
+  try {
+    const { rows: [client ] } = await db.query(sql);
+    return client;
+  } catch (err) {
+    console.log(`ERROR UPDATING WHICH PATIENT IS CLIENT:`, err);
+  }
+}
+
 export const getClientByLogin = async ({ userName, password }) => {
   const sql = `
     SELECT * FROM client_credentials
