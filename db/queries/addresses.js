@@ -11,19 +11,9 @@ export const createAddress = async ({
   postalCode,
 }) => {
   try {
-    const {
-      rows: [address],
-    } = await db.query(`
-      INSERT INTO addresses (
-        street_number_1,
-        street_number_2,
-        apt_unit,
-        city,
-        sub_district,
-        district,
-        provence_state,
-        postal_code)
-      VALUES (
+    const sql = `
+      MERGE INTO addresses a
+      USING (VALUES (
         '${streetLine1}',
         '${streetLine2}',
         '${unit}',
@@ -31,26 +21,58 @@ export const createAddress = async ({
         '${subDist}',
         '${district}',
         '${state}',
-        '${postalCode}')
-      RETURNING *;
-      `);
+        ${postalCode}
+        ))
+      AS n(
+        street_number_1,
+        street_number_2,
+        apt_unit,
+        city,
+        sub_district,
+        district,
+        provence_state,
+        postal_code
+      )
+      ON 
+        a.street_number_1 = n.street_number_1 AND
+        a.street_number_2 = n.street_number_2 AND
+        a.apt_unit = n.apt_unit AND
+        a.city = n.city AND
+        a.sub_district = n.sub_district AND
+        a.district = n.district AND
+        a.provence_state = n.provence_state AND
+        a.postal_code = n.postal_code
+      WHEN NOT MATCHED THEN
+        INSERT (
+          street_number_1,
+          street_number_2,
+          apt_unit,
+          city,
+          sub_district,
+          district,
+          provence_state,
+          postal_code
+        )
+        VALUES (
+          n.street_number_1,
+          n.street_number_2,
+          n.apt_unit,
+          n.city,
+          n.sub_district,
+          n.district,
+          n.provence_state,
+          n.postal_code
+        )
+      WHEN MATCHED THEN DO NOTHING
+      RETURNING a.id;
+    `;
 
-/*
-MERGE INTO addresses a
-USING (VALUES ('123 Main St', 'Denver', 'CO', '80216')) 
-    AS n(street, city, state, zip_code)
-ON a.street = n.street AND a.city = n.city AND a.state = n.state AND a.zip_code = n.zip_code
-WHEN NOT MATCHED THEN
-    INSERT (street, city, state, zip_code) 
-    VALUES (n.street, n.city, n.state, n.zip_code)
-WHEN MATCHED THEN
-    DO NOTHING
-RETURNING a.id;
-
-*/
+    const {
+      rows: [address],
+    } = await db.query(sql);
     return address;
   } catch (err) {
-    console.log(`ERROR CREATING EMPLOYEE:`, err);
+    console.log(`ERROR CREATING ADDRESS:`, err);
   }
 };
 
@@ -71,7 +93,9 @@ export const getAddressByClientId = async (clientID) => {
   `;
 
   try {
-    const { rows: [address] } = await db.query(sql);
+    const {
+      rows: [address],
+    } = await db.query(sql);
 
     if (!address) throw new Error(`The address or the client does not exist`);
     // console.log(`ADDRESS: getAddressByClientId`, address);
@@ -97,16 +121,22 @@ export const getAddressByPatientId = async (patientID) => {
     WHERE patient_info.id = ${patientID};
   `;
   try {
-    const { rows: [address] } = await db.query(sql);
+    const {
+      rows: [address],
+    } = await db.query(sql);
     if (!address) throw new Error(`The address or the patient does not exist`);
     // console.log(`ADDRESS FROM getAddressByPatientId:`, address);
     return address;
   } catch (err) {
-    console.log(`ERROR GETTING PATIENT'S ADDRESS`, err)
+    console.log(`ERROR GETTING PATIENT'S ADDRESS`, err);
   }
 };
 
-export const updatePatientAddress = async (addressID, patientID, newAddressData) => {
+export const updatePatientAddress = async (
+  addressID,
+  patientID,
+  newAddressData,
+) => {
   /*
     Does the new address match exactly any other rows in the table?
       if yes then assign address.id to patient_info.address_id

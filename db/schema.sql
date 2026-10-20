@@ -60,6 +60,8 @@ ADD CONSTRAINT unique_address_idx UNIQUE (
   street_number_2,
   apt_unit,
   city,
+  sub_district,
+  district,
   provence_state,
   postal_code
 );
