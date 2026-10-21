@@ -14,11 +14,11 @@ const seedAddresses = async () => {
     const city = faker.location.city();
 
     const address = {
-      streetLine1: streetLine1,
-      streetLine2: "",
+      street1: streetLine1,
+      street1: "",
       unit: unit,
       city: city,
-      subDist: "Huai Racha",
+      subDistrict: "Huai Racha",
       district: "Huai Rat",
       state: "Buriram",
       postalCode: 31000,
