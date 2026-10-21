@@ -19,6 +19,8 @@ export const createService = async ({ title, description }) => {
   }
 };
 
+export const updateServiceById = async (id) => {};
+
 export const getAllServices = async () => {};
 
-export const getServiceById = async (serviceID) => {};
+export const getServiceById = async (id) => {};

@@ -98,3 +98,5 @@ export const getClientById = async (id) => {
     console.log(`ERROR GETTING CLIENT BY ID:`, err);
   }
 };
+
+export const getAllClientsInfo = async () => {};
