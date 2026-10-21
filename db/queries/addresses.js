@@ -1,11 +1,11 @@
 import db from "../db.js";
 
 export const createAddress = async ({
-  streetLine1,
-  streetLine2,
+  street1,
+  street2,
   unit,
   city,
-  subDist,
+  subDistrict,
   district,
   state,
   postalCode,
@@ -14,11 +14,11 @@ export const createAddress = async ({
     const sql = `
       MERGE INTO addresses a
       USING (VALUES (
-        '${streetLine1}',
-        '${streetLine2}',
+        '${street1}',
+        '${street2}',
         '${unit}',
         '${city}',
-        '${subDist}',
+        '${subDistrict}',
         '${district}',
         '${state}',
         ${postalCode}
@@ -64,12 +64,14 @@ export const createAddress = async ({
           n.postal_code
         )
       WHEN MATCHED THEN DO NOTHING
-      RETURNING a.id;
+      RETURNING a.*;
     `;
 
     const {
       rows: [address],
     } = await db.query(sql);
+    console.log(`address FROM createAddress:`, address);
+    if (!address) throw new Error(`Address not added or already exists`);
     return address;
   } catch (err) {
     console.log(`ERROR CREATING ADDRESS:`, err);
@@ -133,47 +135,64 @@ export const getAddressByPatientId = async (patientID) => {
 };
 
 export const updatePatientAddress = async (
-  addressID,
   patientID,
-  newAddressData,
+  { street1, street2, unit, city, subDistrict, district, state, postalCode }
 ) => {
-  /*
-    Does the new address match exactly any other rows in the table?
-      if yes then assign address.id to patient_info.address_id
-      if no then create new address and assign new address.id to patient_info.address_id
+  const sql = `
+    WITH upsert_address AS (
+      INSERT INTO addresses (
+        street_number_1,
+        street_number_2,
+        apt_unit,
+        city,
+        sub_district,
+        district,
+        provence_state,
+        postal_code
+      )
+      VALUES (
+        '${street1}',
+        '${street2}',
+        '${unit}',
+        '${city}',
+        '${subDistrict}',
+        '${district}',
+        '${state}',
+        ${postalCode}
+      )
+      ON CONFLICT (
+        street_number_1,
+        street_number_2,
+        apt_unit,
+        city,
+        sub_district,
+        district,
+        provence_state,
+        postal_code
+      )
+      DO UPDATE SET
+        street_number_1 = EXCLUDED.street_number_1,
+        street_number_2 = EXCLUDED.street_number_2,
+        apt_unit = EXCLUDED.apt_unit,
+        city = EXCLUDED.city,
+        sub_district = EXCLUDED.sub_district,
+        provence_state = EXCLUDED.provence_state,
+        postal_code = EXCLUDED.postal_code
+      RETURNING id
+    )
 
-ALTER TABLE addresses 
-ADD CONSTRAINT unique_address_idx UNIQUE (street, city, state, zip_code);
+    UPDATE patient_info
+    SET address_id = (SELECT id FROM upsert_address)
+    WHERE id = ${patientID}
+    RETURNING id AS patient_id, address_id;
+  `;
 
-WITH upsert_address AS (
-    INSERT INTO addresses (street, city, state, zip_code)
-    VALUES ('123 Main St', 'Denver', 'CO', '80216')
-    ON CONFLICT (street, city, state, zip_code) 
-    DO UPDATE SET street = EXCLUDED.street -- Safe "no-op" to force Postgres to return the existing row ID
-    RETURNING id
-)
-INSERT INTO users (name, address_id)
-SELECT 'Jane Doe', id 
-FROM upsert_address;
-
-
-!!!
-WITH upsert_address AS (
-    MERGE INTO addresses a
-    USING (VALUES ('123 Main St', 'Denver', 'CO', '80216')) 
-        AS n(street, city, state, zip_code)
-    ON a.street = n.street AND a.city = n.city AND a.state = n.state AND a.zip_code = n.zip_code
-    WHEN NOT MATCHED THEN
-        INSERT (street, city, state, zip_code) 
-        VALUES (n.street, n.city, n.state, n.zip_code)
-    WHEN MATCHED THEN
-        DO NOTHING -- No dummy update needed anymore in PG 17/18!
-    RETURNING a.id
-)
-INSERT INTO users (name, address_id)
-SELECT 'Jane Doe', id 
-FROM upsert_address;
-
-
-  */
+  try {
+    const { rows: [patient]} = await db.query(sql);
+    if (!patient) throw new Error(`The address was NOT updated. Please, try again.`);
+    console.log(`PATIENT FROM updatePatientAddress:`, patient);
+    return patient;
+  } catch (err) {
+    console.log(`ERROR UPDATING PATIENT ADDRESS:`, err);
+  }
 };
