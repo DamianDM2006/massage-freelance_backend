@@ -2,19 +2,22 @@ import db from "../db.js";
 
 export const createAppointment = async ({
   date,
-  time,
+  startTime,
+  endTime,
   patientID,
   serviceID,
 }) => {
   const sql = `
     INSERT INTO appointments (
       date,
-      time,
+      start_time,
+      end_time,
       patient_id,
       service_id)
     VALUES (
       '${date}',
-      '${time}',
+      '${startTime}',
+      '${endTime}',
       '${patientID}',
       '${serviceID}')
     RETURNING *;
@@ -29,13 +32,21 @@ export const createAppointment = async ({
   }
 };
 
-export const getAllAppointments = async () => {
+export const getAllAppointments = async ({ date, startTime, endTime,patientID, serviceID }) => {
   /*
     This will be used to obtain unavailable appointment time.
     the algorythm will be handled mostly on the front end.
 
     this can also be used to provide a schedule for the therapist.
   */
+
+  const sql = ``;
+
+  try {
+
+  } catch (err) {
+    console.log(`ERROR GETTING ALL APPOINTMENTS:`, err)
+  }
 };
 
 export const getAppointmentsByClientID = async (clientID) => {};

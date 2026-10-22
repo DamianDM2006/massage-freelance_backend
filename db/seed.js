@@ -15,7 +15,7 @@ const seedAddresses = async () => {
 
     const address = {
       street1: streetLine1,
-      street1: "",
+      street2: "",
       unit: unit,
       city: city,
       subDistrict: "Huai Racha",
@@ -92,18 +92,28 @@ const seedAppointments = async () => {
 
     const rawTime = rawDate.toISOString().split("T")[1];
     const time = rawTime.slice(0, 5);
+    
+    let [hours, minutes] = time.split(":").map(Number);
+    console.log(`split time:`, [hours, minutes]);
+    hours = (hours + 1) % 24;
 
-    const patientID = Math.floor(Math.random() * 3) + 1;
+    const increasedTime = `${String(hours)}:${String(minutes)}`;
+    console.log(`increasedTime:`, increasedTime);
+    
+
+    const patientID = Math.floor(Math.random() * 10) + 1;
     const serviceID = Math.floor(Math.random() * 3) + 1;
 
-    const appointment = {
+    const appointmentData = {
       date: date,
-      time: time,
+      startTime: time,
+      endTime: increasedTime,
       patientID: patientID,
       serviceID: serviceID,
     };
+    console.log(appointmentData);
 
-    await createAppointment(appointment);
+    await createAppointment(appointmentData);
   }
 };
 
@@ -112,5 +122,5 @@ await seedServices();
 await seedClients();
 await seedAddresses();
 await seedPatients();
-//await seedAppointments();
+await seedAppointments();
 await db.end();
