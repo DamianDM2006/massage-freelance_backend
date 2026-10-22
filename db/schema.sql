@@ -61,8 +61,7 @@ CREATE TABLE appointments (
   service_id INT REFERENCES services(id) NOT NULL,
   completed BOOLEAN NOT NULL DEFAULT false,
   CONSTRAINT check_range CHECK (end_time > start_time),
-  CONSTRAINT scheduled_times UNIQUE (start_time, end_time),
-  CONSTRAINT check_if_available CHECK (end_time > start_time)
+  CONSTRAINT scheduled_times UNIQUE (date, start_time, end_time)
 );
 
 ALTER TABLE client_credentials

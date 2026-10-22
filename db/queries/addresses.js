@@ -70,7 +70,7 @@ export const createAddress = async ({
     const {
       rows: [address],
     } = await db.query(sql);
-    console.log(`address FROM createAddress:`, address);
+    // console.log(`address FROM createAddress:`, address);
     if (!address) throw new Error(`Address not added or already exists`);
     return address;
   } catch (err) {
@@ -190,7 +190,7 @@ export const updatePatientAddress = async (
   try {
     const { rows: [patient]} = await db.query(sql);
     if (!patient) throw new Error(`The address was NOT updated. Please, try again.`);
-    console.log(`PATIENT FROM updatePatientAddress:`, patient);
+    // console.log(`PATIENT FROM updatePatientAddress:`, patient);
     return patient;
   } catch (err) {
     console.log(`ERROR UPDATING PATIENT ADDRESS:`, err);

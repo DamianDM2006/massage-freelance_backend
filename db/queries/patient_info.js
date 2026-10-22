@@ -111,7 +111,7 @@ export const getAllPatientsByClientId = async (clientID) => {
 
   try {
     const { rows: patients } = await db.query(sql);
-    console.log(`patients FROM getAllPatientsByClientId:`, patients);
+    // console.log(`patients FROM getAllPatientsByClientId:`, patients);
     if (patients.length < 1) throw new Error(`There is no data related to the query`)
   } catch (err) {
     console.log(`ERROR GETTING ALL PATIENTS BY CLIENT_ID:`, err)
@@ -138,7 +138,7 @@ export const updatePatientInfo = async (
 
   try {
     const { rows: [patient] } = await db.query(sql);
-    console.log(`patient FROM updatePatientInfo:`, patient);
+    // console.log(`patient FROM updatePatientInfo:`, patient);
     if (!patient) throw new Error(`There is no data related to the query`);
     return patient
   } catch (err) {
@@ -158,7 +158,7 @@ export const getAllPatients = async () => {
 
   try {
     const { rows: patients } = await db.query(sql);
-    console.log(`patients FROM getAllPatients:`, patients);
+    // console.log(`patients FROM getAllPatients:`, patients);
     return patients
   } catch (err) {
     console.log(`ERROR GETTING ALL PATIENTS:`, err)

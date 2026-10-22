@@ -5,7 +5,7 @@ export const createAppointment = async ({
   startTime,
   endTime,
   patientID,
-  serviceID,
+  serviceID
 }) => {
   const sql = `
     INSERT INTO appointments (
@@ -26,6 +26,7 @@ export const createAppointment = async ({
     const {
       rows: [appointment],
     } = await db.query(sql);
+    //console.log(`appointment:`, appointment);
     return appointment;
   } catch (err) {
     console.log(`ERROR CREATING APPOINTMENT:`, err);

@@ -94,12 +94,9 @@ const seedAppointments = async () => {
     const time = rawTime.slice(0, 5);
     
     let [hours, minutes] = time.split(":").map(Number);
-    console.log(`split time:`, [hours, minutes]);
     hours = (hours + 1) % 24;
 
-    const increasedTime = `${String(hours)}:${String(minutes)}`;
-    console.log(`increasedTime:`, increasedTime);
-    
+    const increasedTime = `${String(hours)}:${String(minutes)}`;    
 
     const patientID = Math.floor(Math.random() * 10) + 1;
     const serviceID = Math.floor(Math.random() * 3) + 1;
@@ -111,7 +108,7 @@ const seedAppointments = async () => {
       patientID: patientID,
       serviceID: serviceID,
     };
-    console.log(appointmentData);
+    // console.log(appointmentData);
 
     await createAppointment(appointmentData);
   }

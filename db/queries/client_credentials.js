@@ -121,7 +121,7 @@ export const getAllClientsInfo = async () => {
     `;
 
       const { rows: clients } = await db.query(sql);
-      console.log(`client FROM getAllClientsInfo:`, clients);
+      // console.log(`client FROM getAllClientsInfo:`, clients);
       return clients
   } catch (err) {
     console.log(`ERROR GETTING ALL CLIENTS:`, err)
