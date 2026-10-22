@@ -19,7 +19,25 @@ export const createService = async ({ title, description }) => {
   }
 };
 
-export const updateServiceById = async (id) => {};
+export const updateServiceById = async (id, {title, description}) => {
+  const sql = `
+    UPDATE services
+    SET
+      title = '${title}',
+      description = '${description}'
+    WHERE services.id = ${id}
+    RETURNING *
+  `;
+
+  try {
+    const { rows: [service] } = await db.query(sql);
+    console.log(`service FROM getServiceDetailsById:`, service);
+    if (!service) throw new Error(`There is no data related to the query`);
+    return service
+  } catch (err) {
+    console.log(`ERROR UPDATING SERVICE:`, err)
+  }
+};
 
 export const getAllServices = async () => {
   const sql = `
