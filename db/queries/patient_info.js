@@ -98,19 +98,52 @@ export const getPatientInfoById = async (id) => {
   console.log(`client FROM getPatientInfoById:`, client);
 };
 
-export const getAllPatientsByClientId = async (clientID) => {};
+export const getAllPatientsByClientId = async (clientID) => {
+  const sql = `
+    SELECT
+      patient_info.id AS  patient_id,
+      nickname,
+      first_name,
+      last_name
+    FROM patient_info
+    WHERE patient_info.client_id = ${clientID}  
+  `;
 
-export const updatePatientInfo = async (patientID) => {
-  /*
-    ABLE TO UPDATE THE FOLLOWING 
-      client_id (patient becomes payer/opens new account)
-      last_name (case of marriage, etc.)
-      nickname
-      address_id
-      email
-      line_user_id
-      phone
-  */
+  try {
+    const { rows: patients } = await db.query(sql);
+    console.log(`patients FROM getAllPatientsByClientId:`, patients);
+    if (patients.length < 1) throw new Error(`There is no data related to the query`)
+  } catch (err) {
+    console.log(`ERROR GETTING ALL PATIENTS BY CLIENT_ID:`, err)
+  }
+};
+
+export const updatePatientInfo = async (
+  patientID,
+  { lastName, nickname, email, LineUserID, phone }
+) => {
+  /* updating the patient's address is handled by updatePatientAddress from addresses.js */
+
+  const sql = `
+  UPDATE patient_info
+  SET
+    last_name = '${nickname}',
+    nickname = '${lastName}',
+    email = '${email}',
+    line_user_id = '${LineUserID}',
+    phone = '${phone}'
+  WHERE id = ${patientID}
+  RETURNING patient_info.*
+  `;
+
+  try {
+    const { rows: [patient] } = await db.query(sql);
+    console.log(`patient FROM updatePatientInfo:`, patient);
+    if (!patient) throw new Error(`There is no data related to the query`);
+    return patient
+  } catch (err) {
+    console.log(`ERROR UPDATING PATIENT INFORMATION:`, err)
+  }
 };
 
 export const getAllPatients = async () => {};
