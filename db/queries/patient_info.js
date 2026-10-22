@@ -146,4 +146,21 @@ export const updatePatientInfo = async (
   }
 };
 
-export const getAllPatients = async () => {};
+export const getAllPatients = async () => {
+  const sql = `
+  SELECT
+    patient_info.id AS patient_id,
+    client_id,
+    nickname,
+    first_name,
+    last_name
+  FROM patient_info`;
+
+  try {
+    const { rows: patients } = await db.query(sql);
+    console.log(`patients FROM getAllPatients:`, patients);
+    return patients
+  } catch (err) {
+    console.log(`ERROR GETTING ALL PATIENTS:`, err)
+  }
+};
