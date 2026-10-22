@@ -99,4 +99,31 @@ export const getClientById = async (id) => {
   }
 };
 
-export const getAllClientsInfo = async () => {};
+export const getAllClientsInfo = async () => {
+  try {
+    const sql = `
+      SELECT
+        client_id,
+        patient_info.id AS patient_id,
+        last_name,
+        first_name,
+        nickname,
+        gender,
+        email,
+        line_user_id,
+        phone,
+        birthdate
+      FROM
+        patient_info
+      JOIN client_credentials
+      ON patient_id = client_credentials.patient_id
+      WHERE patient_info.id = client_credentials.patient_id    
+    `;
+
+      const { rows: clients } = await db.query(sql);
+      console.log(`client FROM getAllClientsInfo:`, clients);
+      return clients
+  } catch (err) {
+    console.log(`ERROR GETTING ALL CLIENTS:`, err)
+  }
+};
