@@ -21,6 +21,34 @@ export const createService = async ({ title, description }) => {
 
 export const updateServiceById = async (id) => {};
 
-export const getAllServices = async () => {};
+export const getAllServices = async () => {
+  const sql = `
+    SELECT
+      services.id AS service_id,
+      title
+    FROM services
+  `;
 
-export const getServiceById = async (id) => {};
+  try {
+    const { rows: services } = await db.query(sql);
+    console.log(`services FROM getAllServices:`, services);
+    return services
+  } catch (err) {
+    console.log(`ERROR GETTING ALL SERVICES:`, err)
+  }
+};
+
+export const getServiceDetailsById = async (id) => {
+  const sql = `
+    SELECT * FROM services WHERE id = ${id};
+  `;
+
+  try {
+    const { rows: [service] } = await db.query(sql);
+    console.log(`service FROM getServiceDetailsById:`, service);
+    if (!service) throw new Error(`There is no data related to the query`);
+    return service
+  } catch (err) {
+    console.log(`ERROR GETTING SERVICE DETAILS`, err)
+  }
+};
