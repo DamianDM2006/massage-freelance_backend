@@ -1,6 +1,5 @@
 import db from "../db.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 export const createClientCreds = async ({ userName, password }) => {
   console.log(`userName & password`, userName, password);
@@ -69,14 +68,8 @@ export const getClientByLogin = async ({ userName, password }) => {
     const passMatches = await bcrypt.compare(password, client.password);
 
     if (passMatches === false) throw new Error(`INVALID PASSWORD`);
-
-    const token = jwt.sign(
-      { id: client.id, userName: client.userName },
-      process.env.JWT_SECRET,
-      { expiresIn: "1w" },
-    );
-
-    return { client, token };
+    // console.log(`clent:`, client);
+    return client;
   } catch (err) {
     console.log(`ERROR LOGGING IN CLIENT:`, err);
   }
