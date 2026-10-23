@@ -3,11 +3,11 @@ import db from "./db/db.js";
 
 const PORT = process.env.PORT || 3000;
 
-// app.get('/', (req, res) => {
-//   res.send('hello world');
-// })
+app.get('/API', (req, res) => {
+  res.send('Massage - Freelance by Damian Martinez');
+})
 
-// await db.connect();
+await db.connect();
 
 app.listen(PORT, () => {
   console.log(`Listening on PORT ${PORT}`);
