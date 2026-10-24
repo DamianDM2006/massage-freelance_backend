@@ -6,8 +6,10 @@ import clientsRouter from "./api/clients.js";
 import patientsRouter from "./api/patients.js";
 import appointmentsRouter from "./api/appointments.js";
 import servicesRouter from "./api/services.js";
+import getClientFromToken from "./middleware/getClientFromToken.js";
 
 app.use(express.json());
+app.use(getClientFromToken);
 app.use('/API/clients', clientsRouter);
 app.use('/API/patients', patientsRouter);
 app.use('/API/appointments', appointmentsRouter);

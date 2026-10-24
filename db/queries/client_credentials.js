@@ -76,6 +76,7 @@ export const getClientById = async (id) => {
     return client;
   } catch (err) {
     console.log(`ERROR GETTING CLIENT BY ID:`, err);
+    throw err
   }
 };
 

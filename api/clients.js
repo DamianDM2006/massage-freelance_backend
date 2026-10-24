@@ -21,10 +21,9 @@ router.post('/login', requireBody(["userName", "password"]), async(req, res, nex
   
     const payload = {
       id: client.id,
-      userName: client.user_name,
       patientID: client.patient_id
     };
-    const token = jwt.sign(payload, secretKey, { expiresIn: '1d' });
+    const token = jwt.sign(payload, secretKey, { expiresIn: '1w' });
     res.send(token);
   } catch (err) {
     res.send(err.detail);
@@ -36,9 +35,30 @@ router.post('/register', requireBody(["userName", "password"]), async(req, res, 
   try {
     const { userName, password } = req.body;
     const client = await createClientCreds({ userName, password });
-    res.send(client);
+    const payload = {
+      id: client.id,
+      patientID: client.patient_id
+    };
+    const token = jwt.sign(payload, secretKey, { expiresIn: '1w' });
+    res.send(token);
   } catch (err) {
     res.send(err.detail);
     next()
   };
 });
+
+router.post('/register/patient',
+  requireBody(),
+  // requireAuth,
+  async(req, res, next) => {
+    try{
+      /** 
+       * create new patient with bringing in the client's id
+       * apply the newly made patient id to the client_credentials.patient_id
+       * update token to incorporate patient id
+       */
+    } catch (err) {
+      res.send(err.detail);
+      next()
+    }
+  });
