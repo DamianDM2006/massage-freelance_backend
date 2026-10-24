@@ -2,21 +2,16 @@ import db from "../db.js";
 import bcrypt from "bcrypt";
 
 export const createClientCreds = async ({ userName, password }) => {
-  console.log(`userName & password`, userName, password);
   const hashPass = await bcrypt.hash(password, 10);
   const sql = `
     INSERT INTO client_credentials (user_name, password)
     VALUES ($1, $2)
     RETURNING *
   `;
-  try {
     const {
       rows: [client],
     } = await db.query(sql, [userName, hashPass]);
     return client;
-  } catch (err) {
-    console.log(`ERROR CREATING CLIENT CREDENTIALS:`, err);
-  }
 };
 
 export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
@@ -58,21 +53,13 @@ export const getClientByLogin = async ({ userName, password }) => {
     SELECT * FROM client_credentials
     WHERE user_name = $1;
   `;
-  try {
     const {
       rows: [client],
     } = await db.query(sql, [userName]);
-
-    if (!client) throw new Error("CLIENT NOT FOUND");
-
+    if (!client) return;
     const passMatches = await bcrypt.compare(password, client.password);
-
-    if (passMatches === false) throw new Error(`INVALID PASSWORD`);
-    // console.log(`clent:`, client);
+    if (passMatches === false) return;
     return client;
-  } catch (err) {
-    console.log(`ERROR LOGGING IN CLIENT:`, err);
-  }
 };
 
 export const getClientById = async (id) => {

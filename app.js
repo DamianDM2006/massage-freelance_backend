@@ -7,6 +7,7 @@ import patientsRouter from "./api/patients.js";
 import appointmentsRouter from "./api/appointments.js";
 import servicesRouter from "./api/services.js";
 
+app.use(express.json());
 app.use('/API/clients', clientsRouter);
 app.use('/API/patients', patientsRouter);
 app.use('/API/appointments', appointmentsRouter);
