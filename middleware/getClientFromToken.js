@@ -5,10 +5,9 @@ const secretKey = process.env.JWT_SECRET;
 const getUserFromToken = async (req, res, next) => {
   const authorization = req.headers.authorization;
   if (!authorization || !authorization.startsWith("Bearer ")) return next();
-  console.log(`I'm here.`, authorization);
 
   const token = authorization.split(' ')[1];
-  console.log(`token:`, token);
+  // console.log(`token:`, token);
 
   try {
     const decoded = jwt.verify(token, secretKey);
