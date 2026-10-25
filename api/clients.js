@@ -46,19 +46,3 @@ router.post('/register', requireBody(["userName", "password"]), async(req, res, 
     next()
   };
 });
-
-router.post('/register/patient',
-  requireBody(),
-  // requireAuth,
-  async(req, res, next) => {
-    try{
-      /** 
-       * create new patient with bringing in the client's id
-       * apply the newly made patient id to the client_credentials.patient_id
-       * update token to incorporate patient id
-       */
-    } catch (err) {
-      res.send(err.detail);
-      next()
-    }
-  });
