@@ -6,6 +6,7 @@ import requireAuth from "../middleware/requireAuth.js";
 import requireBody from "../middleware/requireBody.js";
 
 import { createPatient } from "../db/queries/patient_info.js";
+import { updateWhichPatientIsClient } from "../db/queries/client_credentials.js";
 
 router.use(requireAuth);
 
@@ -16,13 +17,7 @@ router.get('/', (req, res) => {
 router.post('/',
   requireBody(["lastName", "nickname", "gender"]),
   async (req, res, next) => {
-    console.log(`Hello patients`, req.client);
     try{
-      /** 
-       * create new patient with bringing in the client's id
-       * apply the newly made patient id to the client_credentials.patient_id
-       * update token to incorporate patient id
-       */
       const {
         firstName,
         lastName,
@@ -38,9 +33,9 @@ router.post('/',
       const newPatient = await createPatient(
         {
           clientID: req.client.id,
-          firstName: firstName,
+          firstName: !firstName ? nickname : firstName,
           lastName: lastName,
-          nickname: !nickname ? firstName : nickname,
+          nickname: nickname,
           gender: gender,
           addressID: !addressID ? 1 : addressID,
           email: !email ? null : email,
@@ -50,10 +45,16 @@ router.post('/',
         }
       );
 console.log(`new patient:`, newPatient);
-      
-      res.status(201).send(newPatient);
+
+if (req.client.patient_id === null) {
+  console.log(`Current client does not have an assing patient_id`);
+  await updateWhichPatientIsClient(req.client.id, newPatient.id);
+  next();
+};
+
+res.status(201).send(newPatient);
     } catch (err) {
-      res.send(err.detail);
+      res.status(409).send(err.detail);
       next()
     }
   });

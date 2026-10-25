@@ -69,6 +69,7 @@ const getClientByPatientId = async (id) => {
     return client
   } catch (err) {
     console.log(`ERROR GETTING CLIENT BY PATIENT ID`, err);
+    throw err;
   }
 }
 
