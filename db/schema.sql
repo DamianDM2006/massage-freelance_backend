@@ -49,7 +49,8 @@ CREATE TABLE patient_info (
   email VARCHAR(100),
   line_user_id VARCHAR(50),
   phone VARCHAR(20),
-  birthdate DATE
+  birthdate DATE,
+  CONSTRAINT unique_patient UNIQUE (last_name, nickname, birthdate)
 );
 
 CREATE TABLE appointments (
