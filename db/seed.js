@@ -8,6 +8,18 @@ import { createClientCreds, updateWhichPatientIsClient } from "./queries/client_
 import { createAppointment } from "./queries/appointments.js";
 
 const seedAddresses = async () => {
+  const defaultAddress = {
+      street1: "No address on file",
+      street2: "",
+      unit: "",
+      city: "",
+      subDistrict: "",
+      district: "",
+      state: "",
+      postalCode: 0
+  };
+  await createAddress(defaultAddress);
+
   for (let i = 1; i <= 3; i++) {
     const streetLine1 = faker.location.streetAddress(false);
     const unit = faker.location.buildingNumber();
@@ -38,8 +50,8 @@ const seedPatients = async () => {
     const gender = faker.person.sex();
     const firstName = faker.person.firstName(gender);
     const lastName = faker.person.lastName();
-    const addressID = Math.floor(Math.random() * 3) + 1;
-    const clientID = addressID;
+    const addressID = Math.floor(Math.random() * 3) + 2;
+    const clientID = Math.floor(Math.random() * 3) + 1;
     const email = faker.internet.email({ firstName: firstName });
     const phone = faker.phone.number({ style: "international" });
 
