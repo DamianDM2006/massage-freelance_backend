@@ -28,12 +28,12 @@ export const createPatient = async ({
           phone,
           birthdate)
         VALUES (
-          '${clientID}',
+          ${clientID},
           '${firstName}',
           '${lastName}',
           '${nickname}',
           '${gender}',
-          '${addressID}',
+          ${addressID},
           '${email}',
           '${lineID}',
           '${phone}',
@@ -43,6 +43,7 @@ export const createPatient = async ({
     return patient;
   } catch (err) {
     console.log(`ERROR CREATING PATIENT:`, err);
+    throw err;
   }
 };
 
