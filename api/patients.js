@@ -5,13 +5,37 @@ export default router;
 import requireAuth from "../middleware/requireAuth.js";
 import requireBody from "../middleware/requireBody.js";
 
-import { createPatient } from "../db/queries/patient_info.js";
+import {
+  createPatient,
+  getAllPatientsByClientId,
+  getPatientInfoById
+} from "../db/queries/patient_info.js";
+
 import { updateWhichPatientIsClient } from "../db/queries/client_credentials.js";
 
 router.use(requireAuth);
 
-router.get('/', (req, res) => {
-  res.send(`Welcome to Massage-Freelance's Patients area.`)
+router.get('/', async (req, res) => {
+    console.log(`GET patients:`, req.client);
+    const patients = await getAllPatientsByClientId(req.client.id);
+    console.log(`GET patients:`, patients);
+    res.send(patients);
+});
+
+router.param('id', async (req, res, next, id) => {
+  try {
+  const patient = await getPatientInfoById(id, req.client.id);
+  console.log(`get specific patient infor:`, patient);
+  if (!patient) return res.status(404).send('PATIENT NOT FOUND.');
+  next()
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+router.get('/:id', (req, res) => {
+  res.send(req.patient);
 });
 
 router.post('/',
@@ -44,15 +68,14 @@ router.post('/',
           birthdate: !birthdate ? null : birthdate
         }
       );
-console.log(`new patient:`, newPatient);
+      console.log(`new patient:`, newPatient);
 
-if (req.client.patient_id === null) {
-  console.log(`Current client does not have an assing patient_id`);
-  await updateWhichPatientIsClient(req.client.id, newPatient.id);
-  next();
-};
-
-res.status(201).send(newPatient);
+      if (req.client.patient_id === null) {
+        console.log(`Current client does not have an assigned patient_id`);
+        await updateWhichPatientIsClient(req.client.id, newPatient.id);
+        next();
+      };
+      res.status(201).send(newPatient);
     } catch (err) {
       res.status(409).send(err.detail);
       next()
