@@ -15,6 +15,7 @@ import { updateWhichPatientIsClient } from "../db/queries/client_credentials.js"
 
 router.use(requireAuth);
 
+/** Gets all patients and patient's information which are related to a client */
 router.get("/", async(req, res) => {
   try {
     const patients = await getAllPatientsByClientId(req.client.id);
@@ -37,10 +38,12 @@ router.param("id", async (req, res, next, id) => {
   }
 });
 
+/** Gets a specific patient's information associated with a client */
 router.get("/:id", (req, res) => {
   res.send(req.patient);
 });
 
+/** Creates new patient information and associates the information with a specific client. */
 router.post(
   "/",
   requireBody(["lastName", "nickname", "gender"]),
@@ -70,10 +73,9 @@ router.post(
         phone: !phone ? null : phone,
         birthdate: !birthdate ? null : birthdate,
       });
-      console.log(`new patient:`, newPatient);
 
+      /** Attaches the patient to a "new" client */
       if (req.client.patient_id === null) {
-        // console.log(`Current client does not have an assigned patient_id`);
         await updateWhichPatientIsClient(req.client.id, newPatient.id);
         next();
       }

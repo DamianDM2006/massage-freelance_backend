@@ -14,6 +14,7 @@ import {
 
 router.use(requireAuth);
 
+/** Gets addresses associated with a client */
 router.get('/', async(req, res) => {
   try {
     const addresses = await getAddressesByClientId(req.client.id);
@@ -27,8 +28,6 @@ router.get('/', async(req, res) => {
 router.param('id', async (req, res, next, id) => {
   try {
     const address = await getAddressByPatientId(id, req.client.id);
-    // console.log(`client:`, req.client);
-    // console.log(`address:`, address);
     req.address = address;
     next()
   } catch(err) {
@@ -37,13 +36,13 @@ router.param('id', async (req, res, next, id) => {
   }
 });
 
+/** Gets the address of a patient */
 router.get('/:id', (req, res) => {
   res.send(req.address);
 });
 
+/** Updates a patient's address and creates a new address if it doesn't already exist */
 router.put('/:id/patient', requireBody(["street1", "city", "state", "postalCode"]), async(req, res, id) => {
-  console.log(`CLIENT`, req.client);
-  console.log(`ADDRESS:`, req.address);
   try {
     const {
       street1,
@@ -76,6 +75,7 @@ router.put('/:id/patient', requireBody(["street1", "city", "state", "postalCode"
   }
 });
 
+/** Creates a new address */
 router.post('/', requireBody(["street1", "city", "state", "postalCode"]), async (req, res, next) => {
   try {
     const {

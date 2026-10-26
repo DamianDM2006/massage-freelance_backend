@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
   res.send(`Welcome to Massage-Freelance's Clients area.`);
 });
 
+/** Logs in an existing client */
 router.post('/login', requireBody(["userName", "password"]), async(req, res, next) => {
   try {
     const { userName, password } = req.body;
@@ -31,6 +32,7 @@ router.post('/login', requireBody(["userName", "password"]), async(req, res, nex
   }
 });
 
+/** Resister and creates a new client */
 router.post('/register', requireBody(["userName", "password"]), async(req, res, next) => {
   try {
     const { userName, password } = req.body;
@@ -46,3 +48,6 @@ router.post('/register', requireBody(["userName", "password"]), async(req, res, 
     next()
   };
 });
+
+/** Will update a client's password */
+router.patch('/password', (req, res, next) => {});
