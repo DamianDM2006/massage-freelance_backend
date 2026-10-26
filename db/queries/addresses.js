@@ -178,11 +178,10 @@ export const updatePatientAddress = async (
         postal_code = EXCLUDED.postal_code
       RETURNING id
     )
-
     UPDATE patient_info
-    SET address_id = (SELECT id FROM upsert_address)
+    SET address_id = (SELECT upsert_address.id FROM upsert_address)
     WHERE id = ${patientID}
-    RETURNING id AS patient_id, address_id;
+    RETURNING id AS patient_id, address_id
   `;
 
   try {
@@ -192,5 +191,6 @@ export const updatePatientAddress = async (
     return patient;
   } catch (err) {
     console.log(`ERROR UPDATING PATIENT ADDRESS:`, err);
+    throw err
   }
 };
