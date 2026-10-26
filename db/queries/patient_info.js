@@ -71,12 +71,27 @@ const getClientByPatientId = async (id) => {
     console.log(`ERROR GETTING CLIENT BY PATIENT ID`, err);
     throw err;
   }
-}
+};
 
-export const getPatientInfoById = async (id) => {
-  const client = await getClientByPatientId(id);
+export const getPatientInfoById = async (id, clientID) => {
   const sql = `
     SELECT
+      client_id,
+      (SELECT
+        first_name AS client_first
+      FROM
+        patient_info
+      JOIN client_credentials
+        ON patient_info.id = client_credentials.patient_id
+      WHERE client_credentials.id = ${clientID}),
+      (SELECT
+        last_name AS client_last
+      FROM
+        patient_info
+      JOIN client_credentials
+        ON patient_info.id = client_credentials.patient_id
+      WHERE client_credentials.id = ${clientID}),
+      id AS patient_id,
       first_name,
       last_name,
       nickname,
@@ -86,37 +101,36 @@ export const getPatientInfoById = async (id) => {
       phone,
       birthdate
     FROM patient_info
-    WHERE patient_info.id = ${id}
+    WHERE id = ${id} AND client_id = ${clientID}
   `;
   try {
     const { rows: [patient] } = await db.query(sql);
-    const patientInfo = { ...client, ...patient };
-    //console.log(`patient:`, patient);
-    //console.log(`patientInfo:`, patientInfo);
-    return patientInfo;
+    return patient;
   } catch (err) {
-    console.log(`ERROR GETTING PATIENT DETAILS:`, err)
+    console.log(`ERROR GETTING PATIENT DETAILS:`, err);
+    // throw err
   }
-  console.log(`client FROM getPatientInfoById:`, client);
 };
 
 export const getAllPatientsByClientId = async (clientID) => {
   const sql = `
     SELECT
-      patient_info.id AS  patient_id,
+      patient_info.id,
       nickname,
       first_name,
-      last_name
+      last_name,
+      birthdate
     FROM patient_info
-    WHERE patient_info.client_id = ${clientID}  
+    WHERE patient_info.client_id = ${clientID}
   `;
 
   try {
     const { rows: patients } = await db.query(sql);
-    // console.log(`patients FROM getAllPatientsByClientId:`, patients);
-    if (patients.length < 1) throw new Error(`There is no data related to the query`)
+    if (patients.length < 1) throw new Error(`There is no data related to the query`);
+    return patients;
   } catch (err) {
-    console.log(`ERROR GETTING ALL PATIENTS BY CLIENT_ID:`, err)
+    console.log(`ERROR GETTING ALL PATIENTS BY CLIENT_ID:`, err);
+    throw err.message;
   }
 };
 
