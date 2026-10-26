@@ -2,17 +2,19 @@ import express from "express";
 const app = express();
 export default app;
 
+import addressesRouter from "./api/addresses.js";
+import appointmentsRouter from "./api/appointments.js";
 import clientsRouter from "./api/clients.js";
 import patientsRouter from "./api/patients.js";
-import appointmentsRouter from "./api/appointments.js";
 import servicesRouter from "./api/services.js";
 import getClientFromToken from "./middleware/getClientFromToken.js";
 
 app.use(express.json());
 app.use(getClientFromToken);
+app.use('/API/addresses', addressesRouter);
+app.use('/API/appointments', appointmentsRouter);
 app.use('/API/clients', clientsRouter);
 app.use('/API/patients', patientsRouter);
-app.use('/API/appointments', appointmentsRouter);
 app.use('/API/services', servicesRouter);
 
 app.use((err, req, res, next) => {

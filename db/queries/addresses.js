@@ -75,10 +75,11 @@ export const createAddress = async ({
     return address;
   } catch (err) {
     console.log(`ERROR CREATING ADDRESS:`, err);
+    throw err;
   }
 };
 
-export const getAddressByClientId = async (clientID) => {
+export const getAddressesByClientId = async (clientID) => {
   const sql = `
   SELECT
     client_credentials.id AS id_number,
@@ -96,12 +97,12 @@ export const getAddressByClientId = async (clientID) => {
 
   try {
     const {
-      rows: [address],
+      rows: addresses,
     } = await db.query(sql);
 
     if (!address) throw new Error(`The address or the client does not exist`);
     // console.log(`ADDRESS: getAddressByClientId`, address);
-    return address;
+    return addresses;
   } catch (err) {
     console.log(`ERROR GETTING CLIENT'S ADDRESS:`, err);
   }
