@@ -81,18 +81,12 @@ export const createAddress = async ({
 
 export const getAddressesByClientId = async (clientID) => {
   const sql = `
-  SELECT
-    client_credentials.id AS id_number,
-    patient_info.nickname AS name,
-    patient_info.last_name AS last_name,
-    addresses.* AS address
-  FROM client_credentials
-  LEFT JOIN patient_info
-  ON client_credentials.id = patient_info.client_id
-  LEFT JOIN addresses
-  ON patient_info.address_id = addresses.id
-  WHERE client_credentials.id = ${clientID}
-  AND client_credentials.patient_id = patient_info.id;
+    SELECT DISTINCT
+      addresses.*
+    FROM addresses
+    JOIN patient_info
+    ON addresses.id = patient_info.address_id
+    WHERE patient_info.client_id = ${clientID}
   `;
 
   try {
@@ -100,15 +94,16 @@ export const getAddressesByClientId = async (clientID) => {
       rows: addresses,
     } = await db.query(sql);
 
-    if (!address) throw new Error(`The address or the client does not exist`);
+    if (addresses.length < 1) throw new Error(`The address or the client does not exist`);
     // console.log(`ADDRESS: getAddressByClientId`, address);
     return addresses;
   } catch (err) {
     console.log(`ERROR GETTING CLIENT'S ADDRESS:`, err);
+    throw err
   }
 };
 
-export const getAddressByPatientId = async (patientID) => {
+export const getAddressByPatientId = async (patientID, clientID) => {
   const sql = `
     SELECT
       patient_info.id AS patient_id,
@@ -121,7 +116,8 @@ export const getAddressByPatientId = async (patientID) => {
       addresses
     ON
       patient_info.address_id = addresses.id
-    WHERE patient_info.id = ${patientID};
+    WHERE patient_info.id = ${patientID}
+      AND patient_info.client_id = ${clientID}
   `;
   try {
     const {
@@ -132,6 +128,7 @@ export const getAddressByPatientId = async (patientID) => {
     return address;
   } catch (err) {
     console.log(`ERROR GETTING PATIENT'S ADDRESS`, err);
+    throw err
   }
 };
 

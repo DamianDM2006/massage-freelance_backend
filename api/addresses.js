@@ -6,25 +6,37 @@ import requireAuth from "../middleware/requireAuth.js";
 import requireBody from "../middleware/requireBody.js";
 
 import {
+  createAddress,
   getAddressesByClientId,
-  createAddress
+  getAddressByPatientId
 } from "../db/queries/addresses.js";
 
 router.use(requireAuth);
 
+router.get('/', async(req, res) => {
+  try {
+    const addresses = await getAddressesByClientId(req.client.id);
+    res.send(addresses)
+  } catch(err) {
+    console.log(err);
+    res.send(err.message)
+  }
+});
+
 router.param('id', async (req, res, next, id) => {
   try {
-    console.log(`current client:`, req.client);
-    const addresses = await getAddressesByClientId(req.client.id);
+    const address = await getAddressByPatientId(id, req.client.id);
+    req.address = address;
+    next()
   } catch(err) {
     console.log(err);
     res.send(err);
   }
 });
 
-router.get('/:id', async (req, res, next, id) => {
-
-})
+router.get('/:id', (req, res) => {
+  res.send(req.address)
+});
 
 router.post('/', requireBody(["street1", "city", "state", "postalCode"]), async (req, res, next) => {
   try {
