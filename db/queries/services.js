@@ -52,7 +52,8 @@ export const getAllServices = async () => {
     // console.log(`services FROM getAllServices:`, services);
     return services
   } catch (err) {
-    console.log(`ERROR GETTING ALL SERVICES:`, err)
+    console.log(`ERROR GETTING ALL SERVICES:`, err);
+    throw err
   }
 };
 
@@ -67,6 +68,7 @@ export const getServiceDetailsById = async (id) => {
     if (!service) throw new Error(`There is no data related to the query`);
     return service
   } catch (err) {
-    console.log(`ERROR GETTING SERVICE DETAILS`, err)
+    console.log(`ERROR GETTING SERVICE DETAILS`, err);
+    throw err
   }
 };

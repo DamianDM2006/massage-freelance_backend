@@ -2,11 +2,41 @@ import express from "express";
 const router = express.Router();
 export default router;
 
-/** Will Get all services. Returns titles. */
-router.get('/', (req, res) => {
-  res.send(`Welcome to Massage-Freelance's Severices area.`)
+import {
+  getAllServices,
+  getServiceDetailsById
+} from "../db/queries/services.js";
+
+/** Gets all services. Returns titles. */
+router.get('/', async(req, res) => {
+  try {
+    const services = await getAllServices();
+    console.log(`services:`, services);
+    res.send(services)
+  } catch(err) {
+    res.send(err.message)
+  }
 });
 
-/** Will Get details of a specific service. */
+/** Gets details of a specific service. */
+router.param('id', async (req, res, next, id) => {
+  try {
+    const service = await getServiceDetailsById(id);
+    req.service = service;
+    next()
+  } catch(err) {
+    res.send(err.message)
+  }
+});
 
-/** Will be able to amend service details. */
+router.get('/:id', (req, res) => {
+  res.send(req.service)
+});
+
+/** Will be able to create a service. 
+ *  FUTURE: Admin only when schema is updated.
+*/
+
+/** Will be able to amend service details.
+ * FUTURE: Admin only when schema is updated.
+ */
