@@ -42,7 +42,7 @@ router.param('id', async(req, res, next, id) => {
 router.get('/:id', async (req, res) => {
   try {
     const appointments = await getAppointmentsByPatientID(req.patientId, req.client.id);
-    if (!appointments) res.status(204).send(`There are no future appointment for the patient.`);
+    if (!appointments) res.status(204).send(`There are no future appointments for the patient.`);
     res.send(appointments)
   } catch(err) {
     console.log(err);

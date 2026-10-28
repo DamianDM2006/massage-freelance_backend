@@ -22,7 +22,7 @@ router.get('/', async(req, res) => {
 router.param('id', async (req, res, next, id) => {
   try {
     const service = await getServiceDetailsById(id);
-    req.service = service;
+    req.serviceId = service.id;
     next()
   } catch(err) {
     res.send(err.message)
