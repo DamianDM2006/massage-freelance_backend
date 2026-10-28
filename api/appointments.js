@@ -2,6 +2,16 @@ import express from "express";
 const router = express.Router();
 export default router;
 
+import requireAuth from "../middleware/requireAuth.js";
+
+import {
+  getAppointmentsByClientID,
+  getAppointmentsByPatientID,
+  cancelAppointment
+} from "../db/queries/appointments.js";
+
+router.use(requireAuth);
+
 /** Will Get all future appointments related to a client. */
 router.get('/', (req, res) => {
   res.send(`Welcome to Massage-Freelance's Appointments area.`)

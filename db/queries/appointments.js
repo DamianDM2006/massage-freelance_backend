@@ -1,28 +1,94 @@
 import db from "../db.js";
 
+const isAvailable = async(reqDate, reqStart, reqEnd) => {
+  try {
+    let available = true;
+    const timeSlots = [];
+    const takenSlots = [];
+    const reqSlot = [];
+    const reqStartVal = Number(reqStart.split(':')[0]) + Number(reqStart.split(':')[1])/60;
+    const reqEndVal = Number(reqEnd.split(':')[0]) + Number(reqEnd.split(':')[1])/60;
+    reqSlot.splice(1, 1, reqStartVal, reqEndVal);
+
+
+    const takenSQL = `
+    SELECT
+    date,
+    start_time,
+    end_time
+    FROM appointments
+    WHERE date = '${reqDate}'
+    `;
+    await db.connect();
+    const { rows: takenTimes } = await db.query(takenSQL);
+    await db.end();
+
+    // console.log(`takenTimes:`, takenTimes);
+    for (let i = 0; i < takenTimes.length; i++) {
+      const startHour = Number(takenTimes[i].start_time.split(':')[0]);
+      const startMin = Number(takenTimes[i].start_time.split(':')[1]);
+      const endHour = Number(takenTimes[i].end_time.split(':')[0]);
+      const endMin = Number(takenTimes[i].end_time.split(':')[1]);
+      const startVal = startHour + (startMin / 60);
+      const endVal = endHour + (endMin / 60);
+      timeSlots.push([startVal, endVal]);
+    };
+
+    timeSlots.sort((a, b) => a[0] - b[0]);
+
+    for (let i = 0; i < timeSlots.length; i++) {
+      if (takenSlots.length < 1) takenSlots.push(timeSlots[i]);
+      if (timeSlots[i][0] > takenSlots[takenSlots.length - 1][1]) {
+        takenSlots.push(timeSlots[i]);
+      };
+      if (takenSlots[takenSlots.length - 1][0] <= timeSlots[i][0] && timeSlots[i][1] > takenSlots[takenSlots.length - 1][1]) {
+        takenSlots[takenSlots.length - 1].splice(1, 1, timeSlots[i][1]);
+      };
+    };
+    // console.log(`takenSlots:`, takenSlots);
+    // console.log(`reqSlot:`, reqSlot);
+
+    let idx = 0;
+
+    while (available === true && idx < takenSlots.length) {
+      if (reqSlot[0] >= takenSlots[idx][0] && reqSlot[0] < takenSlots[idx][1]) available = false;
+      if (reqSlot[1] > takenSlots[idx][0] && reqSlot[1] <= takenSlots[idx][1]) available = false;
+      idx++
+    };
+
+    console.log(`available:`, available);
+    return available
+  } catch (err) {
+    console.log(err)
+  }
+};
+
 export const createAppointment = async ({
-  date,
-  startTime,
-  endTime,
-  patientID,
+  date, /** "YYYY-MM-DD" */
+  startTime, /** "HH:MM:00" 24 hour format */
+  endTime, /** "HH:MM:00" 24 hour format */
+  patientID, 
   serviceID
 }) => {
   const sql = `
-    INSERT INTO appointments (
-      date,
-      start_time,
-      end_time,
-      patient_id,
-      service_id)
+  INSERT INTO appointments (
+    date,
+    start_time,
+    end_time,
+    patient_id,
+    service_id
+    )
     VALUES (
       '${date}',
       '${startTime}',
       '${endTime}',
-      '${patientID}',
-      '${serviceID}')
-    RETURNING *;
-  `;
+      ${patientID},
+      ${serviceID}
+      )
+      RETURNING *;
+      `;
   try {
+    if (!isAvailable(date, startTime, endTime)) throw new Error(`The requested time is not available.`);
     const {
       rows: [appointment],
     } = await db.query(sql);
@@ -30,6 +96,7 @@ export const createAppointment = async ({
     return appointment;
   } catch (err) {
     console.log(`ERROR CREATING APPOINTMENT:`, err);
+    throw err
   }
 };
 
