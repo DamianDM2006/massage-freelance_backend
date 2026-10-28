@@ -74,7 +74,7 @@ router.post(
         birthdate: !birthdate ? null : birthdate,
       });
 
-      /** Attaches the patient to a "new" client */
+      /** Attaches the patient information to a "new" client */
       if (req.client.patient_id === null) {
         await updateWhichPatientIsClient(req.client.id, newPatient.id);
         next();

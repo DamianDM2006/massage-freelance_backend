@@ -157,6 +157,7 @@ export const getAppointmentsByClientID = async (clientID) => {
     JOIN services
       ON appointments.service_id = services.id
     WHERE patient_info.client_id = ${clientID}
+      AND date > CURRENT_DATE
   `;
 
   try {
@@ -164,11 +165,12 @@ export const getAppointmentsByClientID = async (clientID) => {
     if (appointments.length < 1) throw new Error(`There are no appointments under the queried client's account.`);
     return appointments
   } catch (err) {
-    console.log(`ERROR GETTING APPOINTMENT BY CLIENT ID:`, err)
+    console.log(`ERROR GETTING APPOINTMENT BY CLIENT ID:`, err);
+    throw err
   }
 };
 
-export const getAppointmentsByPatientID = async (patientID) => {
+export const getAppointmentsByPatientID = async (patientID, clientID) => {
   const sql = `
     SELECT
       appointments.id AS appt_id,
@@ -187,15 +189,18 @@ export const getAppointmentsByPatientID = async (patientID) => {
       ON appointments.patient_id = patient_info.id
     JOIN services
       ON appointments.service_id = services.id
-    WHERE appointments.patient_id = ${patientID}  
+    WHERE appointments.patient_id = ${patientID}
+      AND patient_info.client_id = ${clientID}
+      AND date > CURRENT_DATE
   `;
 
   try {
     const { rows: appointments } = await db.query(sql);
-    if (appointments.length < 1) throw new Error(`The queried patient does not have appointments scheduled.`);
+    if (appointments.length < 1) throw new Error(`There are no available appointments to show for this patient.`);
     return appointments
   } catch (err) {
-    console.log(`ERROR GETTING APPOINTMENT BY PATIENT ID:`, err)
+    // console.log(`ERROR GETTING APPOINTMENT BY PATIENT ID:`, err)
+    throw err
   }
 };
 
