@@ -19,11 +19,8 @@ const isAvailable = async(reqDate, reqStart, reqEnd) => {
     FROM appointments
     WHERE date = '${reqDate}'
     `;
-    await db.connect();
     const { rows: takenTimes } = await db.query(takenSQL);
-    await db.end();
 
-    // console.log(`takenTimes:`, takenTimes);
     for (let i = 0; i < takenTimes.length; i++) {
       const startHour = Number(takenTimes[i].start_time.split(':')[0]);
       const startMin = Number(takenTimes[i].start_time.split(':')[1]);
@@ -45,21 +42,17 @@ const isAvailable = async(reqDate, reqStart, reqEnd) => {
         takenSlots[takenSlots.length - 1].splice(1, 1, timeSlots[i][1]);
       };
     };
-    // console.log(`takenSlots:`, takenSlots);
-    // console.log(`reqSlot:`, reqSlot);
 
     let idx = 0;
-
     while (available === true && idx < takenSlots.length) {
       if (reqSlot[0] >= takenSlots[idx][0] && reqSlot[0] < takenSlots[idx][1]) available = false;
       if (reqSlot[1] > takenSlots[idx][0] && reqSlot[1] <= takenSlots[idx][1]) available = false;
       idx++
     };
 
-    console.log(`available:`, available);
     return available
   } catch (err) {
-    console.log(err)
+    console.log(`ERROR CHECKING IS AVAILABE:`, err)
   }
 };
 
@@ -67,8 +60,8 @@ export const createAppointment = async ({
   date, /** "YYYY-MM-DD" */
   startTime, /** "HH:MM:00" 24 hour format */
   endTime, /** "HH:MM:00" 24 hour format */
-  patientID, 
-  serviceID
+  patientId, 
+  serviceId
 }) => {
   const sql = `
   INSERT INTO appointments (
@@ -82,20 +75,18 @@ export const createAppointment = async ({
       '${date}',
       '${startTime}',
       '${endTime}',
-      ${patientID},
-      ${serviceID}
+      ${patientId},
+      ${serviceId}
       )
       RETURNING *;
       `;
   try {
-    if (!isAvailable(date, startTime, endTime)) throw new Error(`The requested time is not available.`);
+    if (await isAvailable(date, startTime, endTime) === false) throw new Error(`ERROR CREATING APPOINTMENT: The requested time is not available.`);
     const {
       rows: [appointment],
     } = await db.query(sql);
-    //console.log(`appointment:`, appointment);
     return appointment;
   } catch (err) {
-    console.log(`ERROR CREATING APPOINTMENT:`, err);
     throw err
   }
 };
@@ -162,10 +153,10 @@ export const getAppointmentsByClientID = async (clientID) => {
 
   try {
     const { rows: appointments } = await db.query(sql);
-    if (appointments.length < 1) throw new Error(`There are no appointments under the queried client's account.`);
+    if (appointments.length < 1) throw new Error(`ATTENTION!!: There are no appointments under the queried client's account.`);
     return appointments
   } catch (err) {
-    console.log(`ERROR GETTING APPOINTMENT BY CLIENT ID:`, err);
+    console.log(`ERROR GETTING APPOINTMENTS BY CLIENT ID:`, err);
     throw err
   }
 };
@@ -177,6 +168,7 @@ export const getAppointmentsByPatientID = async (patientID, clientID) => {
       date,
       start_time,
       end_time,
+      patient_info.id AS patient_id,
       patient_info.first_name,
       patient_info.nickname,
       patient_info.last_name,
