@@ -9,7 +9,8 @@ import {
   getAppointmentsByClientID,
   getAppointmentsByPatientID,
   createAppointment,
-  cancelAppointment
+  cancelAppointment,
+  getApptDetails
 } from "../db/queries/appointments.js";
 
 import { getPatientInfoById } from "../db/queries/patient_info.js";
@@ -50,8 +51,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/** Will Schedule a future appointment relating to a patient. */
-router.post('/:id', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
+/** POST Schedules a future appointment relating to a patient. */
+router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
   try {
     const {
       date,
@@ -74,12 +75,36 @@ router.post('/:id', requireBody(["date", "startTime", "endTime", "serviceId"]), 
   }
 });
 
+router.param('appt', async(req, res, next, appt) => {
+  try {
+    const appointment = await getApptDetails(appt, req.patientId);
+    req.apptId = appointment.appt_id;
+    next();
+  } catch(err) {
+    console.log(err);
+    res.status(400).send(err.message)
+  }
+});
+
+/** GETS a specific appointment details */
+router.get('/:id/:appt', async(req, res) => {
+  try {
+    const appointment = await getApptDetails(req.apptId, req.patientId);
+    res.send(appointment)
+  } catch(err) {
+    console.log(err);
+    res.send(err.message)
+  }
+});
+
 /** Will "cancel" a specific future appointment; i.e. delete the appointment from the database.
  *  Rescheduling an appointment will require the patient to "cancel" then schedule a new appointment.
  */
-router.delete('/:id/patient', async(req, res, next, id) => {});
-
-/** Will Update appointments once completed.
- *  This will be only done by the therapist, NOT the client/patient.
- */
-router.patch('/:id/patient', async(req, res, next, id) => {});
+router.delete('/:id/:appt', async(req, res) => {
+  try {
+    await cancelAppointment(req.apptId, req.patientId);
+    res.status(200).send(`Success:  The appointment has been canceled.`)
+  } catch(err) {
+    console.log(err);
+  }
+});

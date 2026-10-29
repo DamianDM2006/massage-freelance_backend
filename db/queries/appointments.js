@@ -80,6 +80,7 @@ export const createAppointment = async ({
       )
       RETURNING *;
       `;
+
   try {
     if (await isAvailable(date, startTime, endTime) === false) throw new Error(`ERROR CREATING APPOINTMENT: The requested time is not available.`);
     const {
@@ -161,13 +162,11 @@ export const getAppointmentsByClientID = async (clientID) => {
   }
 };
 
-export const getAppointmentsByPatientID = async (patientID, clientID) => {
+export const getAppointmentsByPatientID = async (patientId, clientId) => {
   const sql = `
     SELECT
       appointments.id AS appt_id,
       date,
-      start_time,
-      end_time,
       patient_info.id AS patient_id,
       patient_info.first_name,
       patient_info.nickname,
@@ -181,9 +180,9 @@ export const getAppointmentsByPatientID = async (patientID, clientID) => {
       ON appointments.patient_id = patient_info.id
     JOIN services
       ON appointments.service_id = services.id
-    WHERE appointments.patient_id = ${patientID}
-      AND patient_info.client_id = ${clientID}
-      AND date > CURRENT_DATE
+    WHERE appointments.patient_id = ${patientId}
+      AND patient_info.client_id = ${clientId}
+      AND date >= CURRENT_DATE
   `;
 
   try {
@@ -191,12 +190,44 @@ export const getAppointmentsByPatientID = async (patientID, clientID) => {
     if (appointments.length < 1) throw new Error(`There are no available appointments to show for this patient.`);
     return appointments
   } catch (err) {
-    // console.log(`ERROR GETTING APPOINTMENT BY PATIENT ID:`, err)
     throw err
   }
 };
 
-export const cancelAppointment = async (apptID) => {
+export const getApptDetails = async (apptId, patientId) => {
+  const sql = `
+    SELECT
+      appointments.id AS appt_id,
+      date,
+      start_time,
+      end_time,
+      patient_info.id AS patient_id,
+      patient_info.first_name,
+      patient_info.nickname,
+      patient_info.last_name,
+      service_id,
+      services.title,
+      services.description
+    FROM appointments
+    JOIN patient_info
+      ON appointments.patient_id = patient_info.id
+    JOIN services
+      ON appointments.service_id = services.id
+    WHERE appointments.id = ${apptId}
+      AND appointments.patient_id = ${patientId}
+      AND date >= CURRENT_DATE
+  `;
+
+  try {
+    const { rows: [appointment] } = await db.query(sql);
+    if (!appointment) throw new Error(`The queried appointment does not exist or the appointment has passed.`);
+    return appointment;
+  } catch (err) {
+    throw err
+  }
+};
+
+export const cancelAppointment = async (apptId, patientId) => {
   /*
     The process of changing appointments requires the patient/client to
     cancel/delete the appointment and then to reschedule/create a new
@@ -205,18 +236,18 @@ export const cancelAppointment = async (apptID) => {
     canceled appointments will be deleted from the database.
 
     completed appointments will be used to track previous rendered services
-    or no-shows.
+    or no-shows. This will be handled as an administrative task.
   */
-
+ 
   const sql = `
     DELETE FROM appointments
-    WHERE id = ${apptID}
+    WHERE appointments.id = ${apptId} AND appointments.patient_id = ${patientId}
   `;
-
+  
   try {
     await db.query(sql);
-    throw new Error(`The appointment previously haveing id:${apptID} does not exist.`);
   } catch (err) {
     console.log(`ERROR CANCELING APPOINTMENT:`, err)
+    throw err
   }
 };

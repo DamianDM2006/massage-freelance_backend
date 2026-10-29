@@ -65,7 +65,6 @@ const getClientByPatientId = async (id) => {
   try {
     const { rows: [client] } = await db.query(sql);
     if (!client) throw new Error(`There is no data related to the query`);
-    //console.log(`client FROM getClientByPatientId`, client);
     return client
   } catch (err) {
     console.log(`ERROR GETTING CLIENT BY PATIENT ID`, err);
@@ -155,11 +154,11 @@ export const updatePatientInfo = async (
 
   try {
     const { rows: [patient] } = await db.query(sql);
-    // console.log(`patient FROM updatePatientInfo:`, patient);
     if (!patient) throw new Error(`There is no data related to the query`);
     return patient
   } catch (err) {
     console.log(`ERROR UPDATING PATIENT INFORMATION:`, err)
+    throw err
   }
 };
 
@@ -178,6 +177,7 @@ export const getAllPatients = async () => {
     // console.log(`patients FROM getAllPatients:`, patients);
     return patients
   } catch (err) {
-    console.log(`ERROR GETTING ALL PATIENTS:`, err)
+    console.log(`ERROR GETTING ALL PATIENTS:`, err);
+    throw err
   }
 };

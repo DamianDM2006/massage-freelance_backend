@@ -8,25 +8,21 @@ export const createClientCreds = async ({ userName, password }) => {
     VALUES ($1, $2)
     RETURNING *
   `;
-    const {
-      rows: [client],
-    } = await db.query(sql, [userName, hashPass]);
-    return client;
+  const { rows: [client] } = await db.query(sql, [userName, hashPass]);
+  return client;
 };
 
 export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
   try {
-    console.log(`cliendID`, clientID, newPassword);
     const hashPass = await bcrypt.hash(newPassword, 10);
     const sql = `
-    UPDATE client_credentials
-    SET password = '${hashPass}'
-    WHERE id = ${clientID}
-    RETURNING *
+      UPDATE client_credentials
+      SET password = '${hashPass}'
+      WHERE id = ${clientID}
+      RETURNING *
     `;
     
     const { rows: [client] } = await db.query(sql);
-    // console.log(`CLIENT:`, client);
     return client;
   } catch (err) {
     console.log(`ERROR UPDATING PASSWORD:`, err);
@@ -53,13 +49,11 @@ export const getClientByLogin = async ({ userName, password }) => {
     SELECT * FROM client_credentials
     WHERE user_name = $1;
   `;
-    const {
-      rows: [client],
-    } = await db.query(sql, [userName]);
-    if (!client) return;
-    const passMatches = await bcrypt.compare(password, client.password);
-    if (passMatches === false) return;
-    return client;
+  const { rows: [client] } = await db.query(sql, [userName]);
+  if (!client) return;
+  const passMatches = await bcrypt.compare(password, client.password);
+  if (passMatches === false) return;
+  return client;
 };
 
 export const getClientById = async (id) => {
@@ -97,14 +91,15 @@ export const getAllClientsInfo = async () => {
       FROM
         patient_info
       JOIN client_credentials
-      ON patient_id = client_credentials.patient_id
+        ON patient_id = client_credentials.patient_id
       WHERE patient_info.id = client_credentials.patient_id    
     `;
 
-      const { rows: clients } = await db.query(sql);
-      // console.log(`client FROM getAllClientsInfo:`, clients);
-      return clients
+    const { rows: clients } = await db.query(sql);
+    // console.log(`client FROM getAllClientsInfo:`, clients);
+    return clients
   } catch (err) {
-    console.log(`ERROR GETTING ALL CLIENTS:`, err)
+    console.log(`ERROR GETTING ALL CLIENTS:`, err);
+    throw err
   }
 };
