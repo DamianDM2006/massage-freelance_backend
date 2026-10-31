@@ -41,7 +41,7 @@ export const updateServiceById = async (id, {title, description}) => {
 export const getAllServices = async () => {
   const sql = `
     SELECT
-      services.id AS service_id,
+      services.id,
       title
     FROM services
   `;
