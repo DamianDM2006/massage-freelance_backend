@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 const app = express();
 export default app;
 
@@ -9,13 +10,19 @@ import patientsRouter from "./api/patients.js";
 import servicesRouter from "./api/services.js";
 import getClientFromToken from "./middleware/getClientFromToken.js";
 
+const allowedOrigins = [
+  'http://localhost:5173'
+];
+
 app.use(express.json());
 app.use(getClientFromToken);
-app.use('/API/addresses', addressesRouter);
-app.use('/API/appointments', appointmentsRouter);
-app.use('/API/clients', clientsRouter);
-app.use('/API/patients', patientsRouter);
-app.use('/API/services', servicesRouter);
+app.use(cors({ origin: 'http://localhost:5173' }));
+
+app.use('/api/addresses', addressesRouter);
+app.use('/api/appointments', appointmentsRouter);
+app.use('/api/clients', clientsRouter);
+app.use('/api/patients', patientsRouter);
+app.use('/api/services', servicesRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);

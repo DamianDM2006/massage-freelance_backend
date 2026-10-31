@@ -3,8 +3,8 @@ import db from "./db/db.js";
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/API', (req, res) => {
-  res.send('Massage - Freelance by Damian Martinez');
+app.get('/api', (req, res) => {
+  res.send("Massage - Freelance by Damian Martinez");
 })
 
 await db.connect();

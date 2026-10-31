@@ -11,7 +11,6 @@ import {
 router.get('/', async(req, res) => {
   try {
     const services = await getAllServices();
-    console.log(`services:`, services);
     res.send(services)
   } catch(err) {
     res.send(err.message)
