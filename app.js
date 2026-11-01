@@ -10,9 +10,9 @@ import patientsRouter from "./api/patients.js";
 import servicesRouter from "./api/services.js";
 import getClientFromToken from "./middleware/getClientFromToken.js";
 
-const allowedOrigins = [
-  'http://localhost:5173'
-];
+// const allowedOrigins = [
+//   'http://localhost:5173'
+// ];
 
 app.use(express.json());
 app.use(getClientFromToken);

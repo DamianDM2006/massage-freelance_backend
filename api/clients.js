@@ -18,14 +18,14 @@ router.post('/login', requireBody(["userName", "password"]), async(req, res, nex
   try {
     const { userName, password } = req.body;
     const client = await getClientByLogin({ userName, password });
-    if (!client) return res.status(401).send(`INVALID CREDENTIALS: UserName and/or Password.`);
-  
+    if (!client) return res.status(401).send("INVALID CREDENTIALS: UserName and/or Password.");
+    
     const payload = {
       id: client.id,
       patientID: client.patient_id
     };
     const token = jwt.sign(payload, secretKey, { expiresIn: '1w' });
-    res.send(token);
+    res.status(201).send(token);
   } catch (err) {
     res.send(err.detail);
     next()

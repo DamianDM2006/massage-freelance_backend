@@ -47,13 +47,18 @@ export const updateWhichPatientIsClient = async ( clientID, patientID ) => {
 export const getClientByLogin = async ({ userName, password }) => {
   const sql = `
     SELECT * FROM client_credentials
-    WHERE user_name = $1;
+    WHERE user_name = '${userName}'
   `;
-  const { rows: [client] } = await db.query(sql, [userName]);
-  if (!client) return;
-  const passMatches = await bcrypt.compare(password, client.password);
-  if (passMatches === false) return;
-  return client;
+
+  try {
+    const { rows: [client] } = await db.query(sql);
+    if (!client) return;
+    const passMatches = await bcrypt.compare(password, client.password);
+    if (passMatches === false) return;
+    return client;
+  } catch (err) {
+    throw err
+  };
 };
 
 export const getClientById = async (id) => {
