@@ -6,11 +6,13 @@ const secretKey = process.env.JWT_SECRET;
 
 import jwt from "jsonwebtoken";
 import requireBody from "../middleware/requireBody.js";
+import requireAuth from "../middleware/requireAuth.js";
+// import getUserFromToken from "../middleware/getClientFromToken.js";
 
 import { getClientByLogin, createClientCreds } from "../db/queries/client_credentials.js";
 
-router.get('/', (req, res) => {
-  res.send(`Welcome to Massage-Freelance's Clients area.`);
+router.get('/', requireAuth, (req, res) => {
+  res.send(req.client);
 });
 
 /** Logs in an existing client */
