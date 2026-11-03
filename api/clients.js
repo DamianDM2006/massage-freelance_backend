@@ -36,7 +36,6 @@ router.post('/login', requireBody(["userName", "password"]), async(req, res, nex
 
 /** Resister and creates a new client */
 router.post('/register', requireBody(["userName", "password"]), async(req, res, next) => {
-  try {
     const { userName, password } = req.body;
     const client = await createClientCreds({ userName, password });
     const payload = {
@@ -44,11 +43,7 @@ router.post('/register', requireBody(["userName", "password"]), async(req, res, 
       patientID: client.patient_id
     };
     const token = jwt.sign(payload, secretKey, { expiresIn: '1w' });
-    res.send(token);
-  } catch (err) {
-    res.send(err.detail);
-    next()
-  };
+    res.status(201).send(token);
 });
 
 /** Will update a client's password */

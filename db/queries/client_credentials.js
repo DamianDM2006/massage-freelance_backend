@@ -8,8 +8,13 @@ export const createClientCreds = async ({ userName, password }) => {
     VALUES ($1, $2)
     RETURNING *
   `;
-  const { rows: [client] } = await db.query(sql, [userName, hashPass]);
-  return client;
+
+  try {
+    const { rows: [client] } = await db.query(sql, [userName, hashPass]);
+    return client;
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
@@ -41,6 +46,7 @@ export const updateWhichPatientIsClient = async ( clientID, patientID ) => {
     return client;
   } catch (err) {
     console.log(`ERROR UPDATING WHICH PATIENT IS CLIENT:`, err);
+    throw err;
   }
 }
 

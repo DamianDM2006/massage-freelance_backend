@@ -25,6 +25,13 @@ app.use('/api/patients', patientsRouter);
 app.use('/api/services', servicesRouter);
 
 app.use((err, req, res, next) => {
+  switch(err.code) {
+    case "23505": return res.status(409).send(err.detail);
+    default: next(err);
+  }
+});
+
+app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send(`INTERNAL SERVER ERROR: Please, wait and try again later as we work on a remedy.`)
 })
