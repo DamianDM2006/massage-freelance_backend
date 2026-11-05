@@ -1,14 +1,14 @@
 import db from "../db.js";
 
 export const createPatient = async ({
-  clientID,
+  clientId,
   firstName,
   lastName,
   nickname,
   gender,
-  addressID,
+  addressId,
   email,
-  lineID,
+  lineId,
   phone,
   birthdate,
 }) => {
@@ -28,14 +28,14 @@ export const createPatient = async ({
           phone,
           birthdate)
         VALUES (
-          ${clientID},
+          ${clientId},
           '${firstName}',
           '${lastName}',
           '${nickname}',
           '${gender}',
-          ${addressID},
+          ${addressId},
           '${email}',
-          '${lineID}',
+          '${lineId}',
           '${phone}',
           '${birthdate}')
         RETURNING *;

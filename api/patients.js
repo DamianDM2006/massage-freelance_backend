@@ -55,9 +55,9 @@ router.post(
         lastName,
         nickname,
         gender,
-        addressID,
+        addressId,
         email,
-        lineID,
+        lineId,
         phone,
         birthdate,
       } = req.body;
@@ -68,9 +68,9 @@ router.post(
         lastName: lastName,
         nickname: nickname,
         gender: gender,
-        addressID: !addressID ? 1 : addressID,
+        addressId: !addressId ? 1 : addressId,
         email: !email ? null : email,
-        lineID: !lineID ? null : lineID,
+        lineId: !lineId ? null : lineId,
         phone: !phone ? null : phone,
         birthdate: !birthdate ? null : birthdate,
       });
