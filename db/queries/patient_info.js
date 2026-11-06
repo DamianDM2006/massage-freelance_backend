@@ -12,34 +12,33 @@ export const createPatient = async ({
   phone,
   birthdate,
 }) => {
+  const sql = `
+    INSERT INTO patient_info (
+      client_id,
+      first_name,
+      last_name,
+      nickname,
+      gender,
+      address_id,
+      email,
+      line_user_id,
+      phone,
+      birthdate)
+    VALUES (
+      ${clientId},
+      '${firstName}',
+      '${lastName}',
+      '${nickname}',
+      '${gender}',
+      ${addressId},
+      '${email}',
+      '${lineId}',
+      '${phone}',
+      '${birthdate}')
+    RETURNING *
+  `;
   try {
-    const {
-      rows: [patient],
-    } = await db.query(`
-        INSERT INTO patient_info (
-          client_id,
-          first_name,
-          last_name,
-          nickname,
-          gender,
-          address_id,
-          email,
-          line_user_id,
-          phone,
-          birthdate)
-        VALUES (
-          ${clientId},
-          '${firstName}',
-          '${lastName}',
-          '${nickname}',
-          '${gender}',
-          ${addressId},
-          '${email}',
-          '${lineId}',
-          '${phone}',
-          '${birthdate}')
-        RETURNING *;
-      `);
+    const { rows: [patient] } = await db.query(sql);
     return patient;
   } catch (err) {
     console.log(`ERROR CREATING PATIENT:`, err);
