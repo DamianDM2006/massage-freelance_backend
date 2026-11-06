@@ -27,6 +27,7 @@ app.use('/api/services', servicesRouter);
 app.use((err, req, res, next) => {
   switch(err.code) {
     case "23505": return res.status(409).send(err.detail);
+    case "42703": return res.status(422).send(err.detail);
     default: next(err);
   }
 });

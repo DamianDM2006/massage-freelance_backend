@@ -63,7 +63,7 @@ router.post(
       } = req.body;
 
       const newPatient = await createPatient({
-        clientID: req.client.id,
+        clientId: req.client.id,
         firstName: !firstName ? nickname : firstName,
         lastName: lastName,
         nickname: nickname,
