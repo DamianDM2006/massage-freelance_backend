@@ -31,7 +31,7 @@ router.param('id', async (req, res, next, id) => {
     req.address = address;
     next()
   } catch(err) {
-    res.status(404).send(err);
+    res.status(400).send(err.message);
   }
 });
 

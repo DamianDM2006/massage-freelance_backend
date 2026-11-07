@@ -126,7 +126,7 @@ export const getAddressByPatientId = async (patientID, clientID) => {
     if (!address) throw new Error(`The address/patient combination does not exist`);
     return address;
   } catch (err) {
-    throw err.message;
+    throw err
   }
 };
 
