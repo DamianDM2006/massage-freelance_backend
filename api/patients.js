@@ -29,13 +29,11 @@ router.get("/", async(req, res) => {
 router.param("pt", async (req, res, next, id) => {
   try{
     const patient = await getPatientInfoById(id, req.client.id)
-    if (!patient) return res.status(404).send("PATIENT NOT FOUND.");
     req.patient = patient;
     req.patienId = patient.patient_id;
     next();
   } catch (err) {
-    console.log(err);
-    res.send(err);
+    res.status(404).send(err.message);
   }
 });
 

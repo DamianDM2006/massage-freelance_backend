@@ -123,12 +123,10 @@ export const getAddressByPatientId = async (patientID, clientID) => {
     const {
       rows: [address],
     } = await db.query(sql);
-    if (!address) throw new Error(`The address or the patient does not exist`);
-    // console.log(`ADDRESS FROM getAddressByPatientId:`, address);
+    if (!address) throw new Error(`The address/patient combination does not exist`);
     return address;
   } catch (err) {
-    console.log(`ERROR GETTING PATIENT'S ADDRESS`, err);
-    throw err
+    throw err.message;
   }
 };
 

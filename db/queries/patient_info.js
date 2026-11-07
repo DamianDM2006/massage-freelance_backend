@@ -106,7 +106,6 @@ export const getPatientInfoById = async (id, clientID) => {
     if (!patient) throw new Error(`ERROR: Invalid patient/client combination`)
     return patient;
   } catch (err) {
-    console.log(`ERROR GETTING PATIENT DETAILS:`, err);
     throw err
   }
 };
