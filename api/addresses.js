@@ -41,7 +41,7 @@ router.get('/:id', (req, res) => {
 });
 
 /** Updates a patient's address and creates a new address if it doesn't already exist */
-router.put('/:id/patient', requireBody(["street1", "city", "state", "postalCode"]), async(req, res, id) => {
+router.put('/:id/patient', requireBody(["street1", "city", "state", "postalCode"]), async(req, res) => {
   try {
     const {
       street1,

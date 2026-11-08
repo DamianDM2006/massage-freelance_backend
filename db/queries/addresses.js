@@ -174,7 +174,7 @@ export const updatePatientAddress = async (
         sub_district = EXCLUDED.sub_district,
         provence_state = EXCLUDED.provence_state,
         postal_code = EXCLUDED.postal_code
-      RETURNING id
+      RETURNING addresses.id
     )
     UPDATE patient_info
     SET address_id = (SELECT upsert_address.id FROM upsert_address)
@@ -185,10 +185,8 @@ export const updatePatientAddress = async (
   try {
     const { rows: [patient]} = await db.query(sql);
     if (!patient) throw new Error(`The address was NOT updated. Please, try again.`);
-    // console.log(`PATIENT FROM updatePatientAddress:`, patient);
     return patient;
   } catch (err) {
-    console.log(`ERROR UPDATING PATIENT ADDRESS:`, err);
     throw err
   }
 };
