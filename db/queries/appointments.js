@@ -1,6 +1,6 @@
 import db from "../db.js";
 
-const isAvailable = async(reqDate, reqStart, reqEnd) => {
+export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
   try {
     let available = true;
     const timeSlots = [];

@@ -8,6 +8,7 @@ import requireBody from "../middleware/requireBody.js";
 import {
   getAppointmentsByClientID,
   getAppointmentsByPatientID,
+  isAvailable,
   createAppointment,
   cancelAppointment,
   getApptDetails
@@ -51,6 +52,27 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/** GET Confirms requested appoint availability relating to a patient(:id) */
+router.get('/:id/appointment', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
+  try {
+    const {
+      date,
+      startTime,
+      endTime
+    } = req.body;
+
+    const available = await isAvailable({
+      reqDate: date,
+      reqStart: startTime,
+      reqEnd: endTime,
+    });
+    res.status(202).send(available)
+  } catch(err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+});
+
 /** POST Schedules a future appointment relating to a patient. */
 router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
   try {
@@ -76,8 +98,10 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "se
 });
 
 router.param('appt', async(req, res, next, appt) => {
+  
+  
   try {
-    const appointment = await getApptDetails(appt, req.patientId);
+    const appointment = await createAppointment(appt, req.patientId);
     req.apptId = appointment.appt_id;
     next();
   } catch(err) {
