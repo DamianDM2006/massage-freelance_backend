@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
 });
 
 /** GET Confirms requested appoint availability relating to a patient(:id) */
-router.get('/:id/appointment', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
+router.get('/:id/appointment', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
   try {
     const {
       date,
