@@ -15,7 +15,8 @@ export const createService = async ({ title, description }) => {
       `);
     return service;
   } catch (err) {
-    console.log(`ERROR CREATING SERVICE:`, err);
+    // console.log(`ERROR CREATING SERVICE:`, err);
+    throw err;
   }
 };
 
@@ -34,7 +35,8 @@ export const updateServiceById = async (id, {title, description}) => {
     if (!service) throw new Error(`There is no data related to the query`);
     return service
   } catch (err) {
-    console.log(`ERROR UPDATING SERVICE:`, err)
+    // console.log(`ERROR UPDATING SERVICE:`, err);
+    throw err
   }
 };
 
@@ -50,7 +52,7 @@ export const getAllServices = async () => {
     const { rows: services } = await db.query(sql);
     return services
   } catch (err) {
-    console.log(`ERROR GETTING ALL SERVICES:`, err);
+    // console.log(`ERROR GETTING ALL SERVICES:`, err);
     throw err
   }
 };
@@ -65,7 +67,7 @@ export const getServiceDetailsById = async (id) => {
     if (!service) throw new Error(`There is no data related to the query`);
     return service
   } catch (err) {
-    console.log(`ERROR GETTING SERVICE DETAILS`, err);
+    // console.log(`ERROR GETTING SERVICE DETAILS`, err);
     throw err
   }
 };

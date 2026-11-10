@@ -19,7 +19,7 @@ const getUserFromToken = async (req, res, next) => {
     req.client = client;
     next();
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(401).send(err.message);
   }
 };

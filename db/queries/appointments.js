@@ -53,6 +53,7 @@ export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
     return available
   } catch (err) {
     console.log(`ERROR CHECKING IS AVAILABE:`, err)
+    throw err;
   }
 };
 

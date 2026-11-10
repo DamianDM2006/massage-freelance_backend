@@ -74,7 +74,7 @@ export const createAddress = async ({
     if (!address) throw new Error(`Address not added or already exists`);
     return address;
   } catch (err) {
-    console.log(`ERROR CREATING ADDRESS:`, err);
+    // console.log(`ERROR CREATING ADDRESS:`, err);
     throw err;
   }
 };
@@ -98,7 +98,7 @@ export const getAddressesByClientId = async (clientID) => {
     // console.log(`ADDRESS: getAddressByClientId`, address);
     return addresses;
   } catch (err) {
-    console.log(`ERROR GETTING CLIENT'S ADDRESS:`, err);
+    // console.log(`ERROR GETTING CLIENT'S ADDRESS:`, err);
     throw err
   }
 };

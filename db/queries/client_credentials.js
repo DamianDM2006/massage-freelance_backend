@@ -31,6 +31,7 @@ export const updatePasswordbyClientID = async ({ clientID, newPassword }) => {
     return client;
   } catch (err) {
     console.log(`ERROR UPDATING PASSWORD:`, err);
+    throw err;
   }
 };
 
@@ -45,7 +46,7 @@ export const updateWhichPatientIsClient = async ( clientID, patientID ) => {
     const { rows: [client ] } = await db.query(sql);
     return client;
   } catch (err) {
-    console.log(`ERROR UPDATING WHICH PATIENT IS CLIENT:`, err);
+    // console.log(`ERROR UPDATING WHICH PATIENT IS CLIENT:`, err);
     throw err;
   }
 }
@@ -80,7 +81,7 @@ export const getClientById = async (id) => {
     } = await db.query(sql);
     return client;
   } catch (err) {
-    console.log(`ERROR GETTING CLIENT BY ID:`, err);
+    // console.log(`ERROR GETTING CLIENT BY ID:`, err);
     throw err
   }
 };
@@ -110,7 +111,7 @@ export const getAllClientsInfo = async () => {
     // console.log(`client FROM getAllClientsInfo:`, clients);
     return clients
   } catch (err) {
-    console.log(`ERROR GETTING ALL CLIENTS:`, err);
+    // console.log(`ERROR GETTING ALL CLIENTS:`, err);
     throw err
   }
 };
