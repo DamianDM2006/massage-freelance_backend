@@ -62,9 +62,9 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), a
     } = req.body;
 
     const available = await isAvailable({
-      reqDate: date,
-      reqStart: startTime,
-      reqEnd: endTime,
+      date: date,
+      startTime: startTime,
+      endTime: endTime,
     });
     res.status(202).send({available: available, requested: req.body})
   } catch(err) {
@@ -74,7 +74,7 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), a
 });
 
 /** POST Schedules a future appointment relating to a patient. */
-router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
+router.post('/:id/appointment/set', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
   try {
     const {
       date,
@@ -82,6 +82,8 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "se
       endTime,
       serviceId
     } = req.body;
+
+    console.log(`request body:`, req.body);
 
     const appointment = await createAppointment({
       date: date,
@@ -93,7 +95,7 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime", "se
     res.status(202).send(appointment)
   } catch(err) {
     console.log(err);
-    res.send(err.message)
+    res.status(400).send(err.message)
   }
 });
 
@@ -117,7 +119,7 @@ router.get('/:id/:appt', async(req, res) => {
     res.send(appointment)
   } catch(err) {
     console.log(err);
-    res.send(err.message)
+    res.status(400).send(err.message)
   }
 });
 

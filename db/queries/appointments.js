@@ -1,13 +1,14 @@
 import db from "../db.js";
 
-export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
+export const isAvailable = async({date, startTime, endTime}) => {
+  console.log(`startTime in is availabe:`, startTime);
   try {
     let available = true;
     const timeSlots = [];
     const takenSlots = [];
     const reqSlot = [];
-    const reqStartVal = Number(reqStart.split(':')[0]) + Number(reqStart.split(':')[1])/60;
-    const reqEndVal = Number(reqEnd.split(':')[0]) + Number(reqEnd.split(':')[1])/60;
+    const reqStartVal = Number(startTime.split(':')[0]) + Number(startTime.split(':')[1])/60;
+    const reqEndVal = Number(endTime.split(':')[0]) + Number(endTime.split(':')[1])/60;
     reqSlot.splice(1, 1, reqStartVal, reqEndVal);
 
 
@@ -17,10 +18,9 @@ export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
     start_time,
     end_time
     FROM appointments
-    WHERE date = '${reqDate}'
+    WHERE date = '${date}'
     `;
     const { rows: takenTimes } = await db.query(takenSQL);
-    // console.log(`takenTimes:`, takenTimes);
 
     for (let i = 0; i < takenTimes.length; i++) {
       const startHour = Number(takenTimes[i].start_time.split(':')[0]);
@@ -53,7 +53,7 @@ export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
 
     return available
   } catch (err) {
-    console.log(`ERROR CHECKING IS AVAILABE:`, err)
+    console.log(`ERROR CHECKING IF IS AVAILABE:`, err)
     throw err;
   }
 };
@@ -65,6 +65,8 @@ export const createAppointment = async ({
   patientId, 
   serviceId
 }) => {
+
+  console.log(`startTime:`, startTime);
   const sql = `
   INSERT INTO appointments (
     date,
@@ -84,7 +86,7 @@ export const createAppointment = async ({
       `;
 
   try {
-    if (await isAvailable(date, startTime, endTime) === false) throw new Error(`ERROR CREATING APPOINTMENT: The requested time is not available.`);
+    if (await isAvailable({date, startTime, endTime}) === false) throw new Error(`ERROR CREATING APPOINTMENT: The requested time is not available.`);
     const {
       rows: [appointment],
     } = await db.query(sql);
