@@ -52,8 +52,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/** GET Confirms requested appoint availability relating to a patient(:id) */
-router.get('/:id/appointment', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
+/** POST Confirms requested appoint availability relating to a patient(:id) */
+router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
   try {
     const {
       date,
@@ -66,7 +66,7 @@ router.get('/:id/appointment', requireBody(["date", "startTime", "endTime"]), as
       reqStart: startTime,
       reqEnd: endTime,
     });
-    res.status(202).send(available)
+    res.status(202).send({available: available, requested: req.body})
   } catch(err) {
     console.log(err);
     res.status(400).send(err);

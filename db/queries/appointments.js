@@ -20,6 +20,7 @@ export const isAvailable = async({reqDate, reqStart, reqEnd}) => {
     WHERE date = '${reqDate}'
     `;
     const { rows: takenTimes } = await db.query(takenSQL);
+    // console.log(`takenTimes:`, takenTimes);
 
     for (let i = 0; i < takenTimes.length; i++) {
       const startHour = Number(takenTimes[i].start_time.split(':')[0]);
