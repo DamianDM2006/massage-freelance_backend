@@ -1,7 +1,6 @@
 import db from "../db.js";
 
 export const isAvailable = async({date, startTime, endTime}) => {
-  console.log(`startTime in is availabe:`, startTime);
   try {
     let available = true;
     const timeSlots = [];
@@ -53,7 +52,6 @@ export const isAvailable = async({date, startTime, endTime}) => {
 
     return available
   } catch (err) {
-    console.log(`ERROR CHECKING IF IS AVAILABE:`, err)
     throw err;
   }
 };
@@ -66,7 +64,6 @@ export const createAppointment = async ({
   serviceId
 }) => {
 
-  console.log(`startTime:`, startTime);
   const sql = `
   INSERT INTO appointments (
     date,

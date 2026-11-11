@@ -52,7 +52,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-/** POST Confirms requested appoint availability relating to a patient(:id) */
+/** POST Confirms requested appointment availability relating to a patient(:id) */
 router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
   try {
     const {
@@ -68,7 +68,6 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), a
     });
     res.status(202).send({available: available, requested: req.body})
   } catch(err) {
-    console.log(err);
     res.status(400).send(err);
   }
 });
@@ -83,8 +82,6 @@ router.post('/:id/appointment/set', requireBody(["date", "startTime", "endTime",
       serviceId
     } = req.body;
 
-    console.log(`request body:`, req.body);
-
     const appointment = await createAppointment({
       date: date,
       startTime: startTime, 
@@ -94,14 +91,11 @@ router.post('/:id/appointment/set', requireBody(["date", "startTime", "endTime",
      });
     res.status(202).send(appointment)
   } catch(err) {
-    console.log(err);
     res.status(400).send(err.message)
   }
 });
 
 router.param('appt', async(req, res, next, appt) => {
-  
-  
   try {
     const appointment = await createAppointment(appt, req.patientId);
     req.apptId = appointment.appt_id;
@@ -123,7 +117,7 @@ router.get('/:id/:appt', async(req, res) => {
   }
 });
 
-/** Will "cancel" a specific future appointment; i.e. delete the appointment from the database.
+/** DELETE "cancel" a specific future appointment; i.e. delete the appointment from the database.
  *  Rescheduling an appointment will require the patient to "cancel" then schedule a new appointment.
  */
 router.delete('/:id/:appt', async(req, res) => {
