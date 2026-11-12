@@ -18,45 +18,11 @@ import { getPatientInfoById } from "../db/queries/patient_info.js";
 
 router.use(requireAuth);
 
-/** GETS all future appointments related to a client. */
-router.get('/', async(req, res) => {
-  try {
-    const appointments = await getAppointmentsByClientID(req.client.id);
-    res.send(appointments);
-  } catch(err) {
-    res.status(400).send(err.message)
-  }
-});
+// GETS all appointments
+router.get('/',);
 
-/** Initializes id to patient's id */
-router.param('id', async(req, res, next, id) => {
-  try {
-    const patient = await getPatientInfoById(id, req.client.id);
-    req.patientId = patient.patient_id;
-    next()
-  } catch(err) {
-    console.log(err);
-    res.status(401).send(err.message);
-  }
-});
-
-/** GETS all future appointments relating to a patient. */
-router.get('/:id', async (req, res) => {
-  try {
-    const appointments = await getAppointmentsByPatientID(req.patientId, req.client.id);
-    if (appointments.length < 1) {
-      res.status(203).send('There are no future appointments for the patient.')
-    } else {
-      res.send(appointments)
-    };
-  } catch(err) {
-    console.log(err);
-    res.send(err)
-  }
-});
-
-/** POST Confirms requested appointment availability relating to a patient(:id) */
-router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
+// POSTS a request of availability of a requested appointment 
+router.post('/', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
   try {
     const {
       date,
@@ -75,8 +41,46 @@ router.post('/:id/appointment', requireBody(["date", "startTime", "endTime"]), a
   }
 });
 
-/** POST Schedules a future appointment relating to a patient. */
-router.post('/:id/appointment/set', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
+// GETS all appointments of a client (i.e. all patients)
+router.get('/patients', async(req, res) => {
+  try {
+    const appointments = await getAppointmentsByClientID(req.client.id);
+    res.send(appointments);
+  } catch(err) {
+    res.status(400).send(err.message)
+  }
+});
+
+/***** needs testing. If fails then everything below must change. */
+// Initializes patid to the patient's id
+router.param('patid', async(req, res, next, patid) => {
+  try {
+    const patient = await getPatientInfoById(patid, req.client.id);
+    req.patientId = patient.patient_id; /** ?? req.patid = patient.patient_id ?? */
+    next()
+  } catch(err) {
+    console.log(err);
+    res.status(401).send(err.message);
+  }
+});
+
+// GETS all appointments of a specific patient by patient id
+router.get('/patients/:patid', async (req, res) => {
+  try {
+    const appointments = await getAppointmentsByPatientID(req.patientId, req.client.id);
+    if (appointments.length < 1) {
+      res.status(203).send('There are no future appointments for the patient.')
+    } else {
+      res.send(appointments)
+    };
+  } catch(err) {
+    console.log(err);
+    res.send(err)
+  }
+});
+
+// POSTS Schedules a requested appointment for a specific patient after confirming availabilty
+router.post('/patient/:patid', requireBody(["date", "startTime", "endTime", "serviceId"]), async(req, res) => {
   try {
     const {
       date,
@@ -98,9 +102,10 @@ router.post('/:id/appointment/set', requireBody(["date", "startTime", "endTime",
   }
 });
 
-router.param('appt', async(req, res, next, appt) => {
+// Initializea apptid to an appointment's id
+router.param('apptid', async(req, res, next, apptid) => {
   try {
-    const appointment = await createAppointment(appt, req.patientId);
+    const appointment = await createAppointment(apptid, req.patientId);
     req.apptId = appointment.appt_id;
     next();
   } catch(err) {
@@ -109,8 +114,8 @@ router.param('appt', async(req, res, next, appt) => {
   }
 });
 
-/** GETS a specific appointment details */
-router.get('/:id/:appt', async(req, res) => {
+// GETS a specific appointment of a specific patient by appointment id
+router.get('/patients/:patid/appointment/:apptid', async(req, res) => {
   try {
     const appointment = await getApptDetails(req.apptId, req.patientId);
     res.send(appointment)
@@ -120,10 +125,8 @@ router.get('/:id/:appt', async(req, res) => {
   }
 });
 
-/** DELETE "cancel" a specific future appointment; i.e. delete the appointment from the database.
- *  Rescheduling an appointment will require the patient to "cancel" then schedule a new appointment.
- */
-router.delete('/:id/:appt', async(req, res) => {
+// DELETES "cancels" a specific 'future' appointment.
+router.delete('/patients/:patid/appointment/:apptid', async(req, res) => {
   try {
     await cancelAppointment(req.apptId, req.patientId);
     res.status(200).send(`Success:  The appointment has been canceled.`)
