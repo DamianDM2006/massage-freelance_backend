@@ -168,6 +168,8 @@ export const getAppointmentsByPatientID = async (patientId, clientId) => {
     SELECT
       appointments.id AS appt_id,
       date,
+      start_time,
+      end_time,
       patient_info.id AS patient_id,
       patient_info.first_name,
       patient_info.nickname,
@@ -188,7 +190,7 @@ export const getAppointmentsByPatientID = async (patientId, clientId) => {
 
   try {
     const { rows: appointments } = await db.query(sql);
-    if (appointments.length < 1) throw new Error(`There are no available appointments to show for this patient.`);
+    // if (appointments.length < 1) throw new Error(`There are no available appointments to show for this patient.`);
     return appointments
   } catch (err) {
     throw err
