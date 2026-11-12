@@ -19,7 +19,7 @@ import { getPatientInfoById } from "../db/queries/patient_info.js";
 router.use(requireAuth);
 
 // GETS all appointments
-router.get('/',);
+// router.get('/',);
 
 // POSTS a request of availability of a requested appointment 
 router.post('/', requireBody(["date", "startTime", "endTime"]), async(req, res) => {
@@ -105,8 +105,9 @@ router.post('/patient/:patid', requireBody(["date", "startTime", "endTime", "ser
 // Initializea apptid to an appointment's id
 router.param('apptid', async(req, res, next, apptid) => {
   try {
-    const appointment = await createAppointment(apptid, req.patientId);
+    const appointment = await getApptDetails(apptid, req.patientId);
     req.apptId = appointment.appt_id;
+    req.appointment = appointment
     next();
   } catch(err) {
     console.log(err);
@@ -117,8 +118,8 @@ router.param('apptid', async(req, res, next, apptid) => {
 // GETS a specific appointment of a specific patient by appointment id
 router.get('/patients/:patid/appointment/:apptid', async(req, res) => {
   try {
-    const appointment = await getApptDetails(req.apptId, req.patientId);
-    res.send(appointment)
+    // const appointment = await getApptDetails(req.apptId, req.patientId);
+    res.send(req.appointment)
   } catch(err) {
     console.log(err);
     res.status(400).send(err.message)
