@@ -231,17 +231,6 @@ export const getApptDetails = async (apptId, patientId) => {
 };
 
 export const cancelAppointment = async (apptId, patientId) => {
-  /*
-    The process of changing appointments requires the patient/client to
-    cancel/delete the appointment and then to reschedule/create a new
-    appointment.
-
-    canceled appointments will be deleted from the database.
-
-    completed appointments will be used to track previous rendered services
-    or no-shows. This will be handled as an administrative task.
-  */
- 
   const sql = `
     DELETE FROM appointments
     WHERE appointments.id = ${apptId} AND appointments.patient_id = ${patientId}

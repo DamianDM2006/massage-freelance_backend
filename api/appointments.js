@@ -51,7 +51,6 @@ router.get('/patients', async(req, res) => {
   }
 });
 
-/***** needs testing. If fails then everything below must change. */
 // Initializes patid to the patient's id
 router.param('patid', async(req, res, next, patid) => {
   try {
@@ -118,7 +117,6 @@ router.param('apptid', async(req, res, next, apptid) => {
 // GETS a specific appointment of a specific patient by appointment id
 router.get('/patients/:patid/appointment/:apptid', async(req, res) => {
   try {
-    // const appointment = await getApptDetails(req.apptId, req.patientId);
     res.send(req.appointment)
   } catch(err) {
     console.log(err);
